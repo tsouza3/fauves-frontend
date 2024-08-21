@@ -41,7 +41,7 @@ const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { totalPrice, totalTickets, ticketId} = location.state;
+  const { totalPrice, totalTickets, ticketId } = location.state;
 
   const [eventData, setEventData] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -54,40 +54,6 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
   const [txid, setTxid] = useState(null);
-
-  const CheckPaymentStatus = () => {
-    const { txid } = useParams();
-    const navigate = useNavigate();
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const checkPaymentStatus = async () => {
-            try {
-                const response = await axios.get(`/verificar-pagamento/${txid}`);
-                if (response.data.status === 'sucesso') {
-                    navigate('/checkout/success'); 
-                }
-            } catch (error) {
-                console.error('Erro ao verificar status do pagamento:', error);
-                setError('Erro ao verificar o status do pagamento.');
-            }
-        };
-
-        const interval = setInterval(() => {
-            checkPaymentStatus();
-        }, 5000); 
-
-        return () => clearInterval(interval);
-    }, [txid, navigate]);
-
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    return <div></div>;
-};
-
-
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -139,14 +105,12 @@ const Checkout = () => {
       setQRCode(pixData.qrCode);
       setPixCopiaCola(pixData.pixCopiaCola);
       setTxid(pixData.txid);
-      console.log(txid)
       setTicketGenerated(true);
     } catch (error) {
       console.error("Erro ao buscar PIX:", error.message);
       setError("Erro ao buscar o PIX. Verifique o valor e tente novamente.");
     }
   };
-  
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -162,7 +126,28 @@ const Checkout = () => {
     }
   };
 
-  
+  // Verificação do status do pagamento
+  useEffect(() => {
+    if (txid) {
+      const checkPaymentStatus = async () => {
+        try {
+          const response = await axios.get(`/verificar-pagamento/${txid}`);
+          if (response.data.status === 'sucesso') {
+            navigate('/checkout/success'); 
+          }
+        } catch (error) {
+          console.error('Erro ao verificar status do pagamento:', error);
+          setError('Erro ao verificar o status do pagamento.');
+        }
+      };
+
+      const interval = setInterval(() => {
+        checkPaymentStatus();
+      }, 5000); 
+
+      return () => clearInterval(interval);
+    }
+  }, [txid, navigate]);
 
   if (!eventData) {
     return <div></div>;
@@ -242,7 +227,7 @@ const Checkout = () => {
           )}
           {paymentMethod === "pix" && (
             <>
-              <Title>P</Title>
+              <Title>PIX</Title>
               <OptionsContainer>
                 <Option onClick={() => handlePaymentMethodChange("creditCard")} selected={paymentMethod === "creditCard"} width={"30%"} minWidth={"60%;"}>
                   <FaRegCreditCard size="20px" color="#4b4b4b" />
@@ -255,16 +240,13 @@ const Checkout = () => {
               </OptionsContainer>
               <PixWrapper>
                 <QrcodeWrapper>
-                  <QRCode value={qrCode} size={256} includeMargin={true} />
+                  <QRCode value={qrCode} size={256} />
                 </QrcodeWrapper>
-                <PixText>
-                  Aguardando pagamento do PIX. <br />
-                  Digitalize o QR Code ou copie o código.
-                </PixText>
-                <SubmitButton width={"50%"} onClick={copyToClipboard}>Copiar código PIX</SubmitButton>
+                <PixText onClick={copyToClipboard}>Copiar código PIX</PixText>
               </PixWrapper>
             </>
           )}
+          <SubmitButton>Confirmar pagamento</SubmitButton>
         </FormWrapper>
       </FormContainer>
     </Section>
