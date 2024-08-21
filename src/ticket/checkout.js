@@ -51,6 +51,8 @@ const Checkout = () => {
   const [ticketGenerated, setTicketGenerated] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
+  const [txid, setTxid] = useState(null);
+
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -101,6 +103,8 @@ const Checkout = () => {
       console.log("Dados do PIX:", pixData); 
       setQRCode(pixData.qrCode);
       setPixCopiaCola(pixData.pixCopiaCola);
+      setTxid(pixData.txid);
+      console.log(txid)
       setTicketGenerated(true);
     } catch (error) {
       console.error("Erro ao buscar PIX:", error.message);
