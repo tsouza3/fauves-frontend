@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { getEventById } from "../services/getEventsById";
 import { getUserProfile } from "../services/userDataService";
 import { FaRegCreditCard } from "react-icons/fa";
 import { SiPix } from "react-icons/si";
 import { getPix } from "../services/paymentService";
 import QRCode from "qrcode.react";
+import axios from "axios";
 
 import {
   Section,
@@ -38,6 +39,7 @@ import {
 const Checkout = () => {
   const { eventId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { totalPrice, totalTickets, ticketId} = location.state;
 
@@ -52,6 +54,39 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
   const [txid, setTxid] = useState(null);
+
+  const CheckPaymentStatus = () => {
+    const { txid } = useParams();
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const checkPaymentStatus = async () => {
+            try {
+                const response = await axios.get(`/verificar-pagamento/${txid}`);
+                if (response.data.status === 'sucesso') {
+                    navigate('/checkout/success'); 
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status do pagamento:', error);
+                setError('Erro ao verificar o status do pagamento.');
+            }
+        };
+
+        const interval = setInterval(() => {
+            checkPaymentStatus();
+        }, 5000); 
+
+        return () => clearInterval(interval);
+    }, [txid, navigate]);
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    return <div></div>;
+};
+
 
 
   useEffect(() => {
