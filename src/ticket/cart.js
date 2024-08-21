@@ -39,6 +39,11 @@ const Cart = () => {
           initialQuantities[ticket._id] = 1;
         });
         setTicketQuantities(initialQuantities);
+
+        // Definindo o ticketId do primeiro ingresso como padrão
+        if (eventData.tickets.length > 0) {
+          setTicketId(eventData.tickets[0]._id);
+        }
       } catch (error) {
         setError("Erro ao buscar o evento.");
       }
@@ -52,7 +57,7 @@ const Cart = () => {
       ...prevQuantities,
       [ticketId]: prevQuantities[ticketId] + 1,
     }));
-    setTicketId(ticketId);
+    setTicketId(ticketId); // Atualizando o ticketId com o ingresso adicionado
   };
 
   const handleRemoveTicket = (ticketId) => {
@@ -74,17 +79,17 @@ const Cart = () => {
     const totalTickets = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
 
     // Verificar se todos os dados necessários estão presentes
-    if (!eventId || !ticketId || !Object.keys(ticketQuantities).length || totalTickets <= 0 || totalPrice <= 0) {
+    if (!eventId || totalTickets <= 0 || totalPrice <= 0) {
       return;
     }
 
     console.log("Dados enviados para o Checkout:", {
       eventId,
-      ticketId,
       ticketQuantities,
       totalTickets,
       totalPrice
     });
+
     navigate(`/checkout/${eventId}`, { state: { ticketId, ticketQuantities, totalTickets, totalPrice } });
   };
 
@@ -93,7 +98,7 @@ const Cart = () => {
   }
 
   if (error) {
-    return <div></div>;
+    return <div>{error}</div>;
   }
 
   return (
