@@ -33,7 +33,7 @@ import {
   QrcodeWrapper,
   PixText,
   BlurredImage,
-  SubmitButton,
+  SubmitButton
 } from "./checkoutStyles";
 
 const Checkout = () => {
@@ -41,7 +41,7 @@ const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { totalPrice, totalTickets, ticketId } = location.state;
+  const { totalPrice, totalTickets, ticketId} = location.state;
 
   const [eventData, setEventData] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -54,6 +54,8 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
   const [txid, setTxid] = useState(null);
+
+
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -99,15 +101,9 @@ const Checkout = () => {
       if (!totalPrice || !eventId || !userId || !ticketId || !totalTickets) {
         throw new Error("Todos os campos obrigatórios devem estar preenchidos.");
       }
-
-      const pixData = await getPix({
-        price: totalPrice,
-        eventId,
-        userId,
-        quantidadeTickets: totalTickets,
-        ticketId,
-      });
-      console.log("Dados do PIX:", pixData);
+  
+      const pixData = await getPix({ price: totalPrice, eventId, userId, quantidadeTickets: totalTickets, ticketId });
+      console.log("Dados do PIX:", pixData); 
       setQRCode(pixData.qrCode);
       setPixCopiaCola(pixData.pixCopiaCola);
       setTxid(pixData.txid);
@@ -117,6 +113,7 @@ const Checkout = () => {
       setError("Erro ao buscar o PIX. Verifique o valor e tente novamente.");
     }
   };
+  
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -131,6 +128,12 @@ const Checkout = () => {
       alert("Código PIX copiado para a área de transferência!");
     }
   };
+
+  
+
+  if (!eventData) {
+    return <div></div>;
+  }
 
   useEffect(() => {
     if (txid) {
@@ -167,15 +170,11 @@ const Checkout = () => {
   return (
     <Section>
       <BlurContainer>
-        <BlurredImage
-          src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
-        />
+        <BlurredImage src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`} />
         <UserContainer>
           {eventData && (
             <>
-              <EventImage
-                src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
-              />
+              <EventImage src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`} />
               <UserText>
                 <Date>{eventData.dataInicio}</Date>
                 <Name>{eventData.nomeEvento}</Name>
@@ -197,40 +196,20 @@ const Checkout = () => {
               <InputWrapper>
                 <InputContainer>
                   <Label>CPF</Label>
-                  <Input
-                    mask="999.999.999-99"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    width="100%"
-                  />
+                  <Input mask="999.999.999-99" type="text" placeholder="000.000.000-00" width="100%" />
                 </InputContainer>
                 <InputContainer>
                   <Label>Data de nasc.</Label>
-                  <Input
-                    mask="99/99/9999"
-                    type="text"
-                    placeholder="__/__/____"
-                    width="100%"
-                  />
+                  <Input mask="99/99/9999" type="text" placeholder="__/__/____" width="100%" />
                 </InputContainer>
               </InputWrapper>
               <Title>FORMA DE PAGAMENTO</Title>
               <OptionsContainer>
-                <Option
-                  onClick={() => handlePaymentMethodChange("creditCard")}
-                  selected={paymentMethod === "creditCard"}
-                  width={"30%"}
-                  minWidth={"60%;"}
-                >
+                <Option onClick={() => handlePaymentMethodChange("creditCard")} selected={paymentMethod === "creditCard"} width={"30%"} minWidth={"60%;"}>
                   <FaRegCreditCard size="20px" color="#4b4b4b" />
                   <OptionText>CARTÃO DE CRÉDITO</OptionText>
                 </Option>
-                <Option
-                  onClick={() => handlePaymentMethodChange("pix")}
-                  selected={paymentMethod === "pix"}
-                  width={"15%"}
-                  minWidth={"30%;"}
-                >
+                <Option onClick={() => handlePaymentMethodChange("pix")} selected={paymentMethod === "pix"} width={"15%"} minWidth={"30%;"}>
                   <SiPix size="20px" color="#4b4b4b" />
                   <OptionText>PIX</OptionText>
                 </Option>
@@ -239,11 +218,7 @@ const Checkout = () => {
               <InputWrapper>
                 <InputContainer>
                   <Label>Número do cartão</Label>
-                  <Input
-                    mask="**** **** **** ****"
-                    width={"100%"}
-                    placeholder="8546 5846 5848 8484"
-                  />
+                  <Input mask="**** **** **** ****" width={"100%"} placeholder="8546 5846 5848 8484" />
                 </InputContainer>
                 <InputContainer>
                   <Label>Validade</Label>
@@ -260,19 +235,13 @@ const Checkout = () => {
               </InputContainer>
               <InputContainer>
                 <Label>Parcelamento</Label>
-                <Input
-                  width={"100%"}
-                  backgroundColor={"#f7f7f7"}
-                  readOnly
-                  value="Parcelamento não disponível"
-                />
+                <Input width={"100%"} backgroundColor={"#f7f7f7"} readOnly value="Parcelamento não disponível" />
               </InputContainer>
-              <SubmitButton>Confirmar pagamento</SubmitButton>
             </>
           )}
-           {paymentMethod === "pix" && (
+          {paymentMethod === "pix" && (
             <>
-              <Title>PIX</Title>
+              <Title>P</Title>
               <OptionsContainer>
                 <Option onClick={() => handlePaymentMethodChange("creditCard")} selected={paymentMethod === "creditCard"} width={"30%"} minWidth={"60%;"}>
                   <FaRegCreditCard size="20px" color="#4b4b4b" />
@@ -285,9 +254,13 @@ const Checkout = () => {
               </OptionsContainer>
               <PixWrapper>
                 <QrcodeWrapper>
-                  <QRCode value={qrCode} size={256} />
+                  <QRCode value={qrCode} size={256} includeMargin={true} />
                 </QrcodeWrapper>
-                <PixText onClick={copyToClipboard}>Copiar código PIX</PixText>
+                <PixText>
+                  Aguardando pagamento do PIX. <br />
+                  Digitalize o QR Code ou copie o código.
+                </PixText>
+                <SubmitButton width={"50%"} onClick={copyToClipboard}>Copiar código PIX</SubmitButton>
               </PixWrapper>
             </>
           )}
