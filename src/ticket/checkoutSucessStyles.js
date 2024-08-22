@@ -13,6 +13,7 @@ export const Section = styled.section`
 export const Logo = styled.img`
   width: 131px;
   height: 60px;
+  margin-top: 3em;
 `;
 
 export const LogoContainer = styled.div`
@@ -24,7 +25,9 @@ export const LogoContainer = styled.div`
 `;
 export const Container = styled.div`
   width: 45%;
-  height: 66%;
+  max-height: 66%;
+  min-height: 66%;
+
   background-color: #fff;
   border-radius: 10px;
   margin-top: 2em;
@@ -53,11 +56,10 @@ export const SubTitle = styled.p`
 
 export const ImageWrapper = styled.div`
   width: 100%; 
-  height: auto; 
   display: flex;
   justify-content: center; 
   align-items: center; 
-  margin
+  
 `;
 
 export const Image = styled.img`

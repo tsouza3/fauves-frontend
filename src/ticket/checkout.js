@@ -119,7 +119,7 @@ const Checkout = () => {
       const checkPaymentStatus = async () => {
         try {
           console.log("Verificando status do pagamento para txid:", txid); // Log do txid
-          const response = await axios.get(`/verificar-pagamento/${txid}`);
+          const response = await axios.get(`https://fauvesapi.thiagosouzadev.com/verificar-pagamento/${txid}`);
           console.log("Resposta da verificação do pagamento:", response.data); // Log da resposta
 
           if (response.data.status === "sucesso") {
@@ -157,7 +157,7 @@ const Checkout = () => {
   };
 
   if (!eventData) {
-    return <div>Carregando...</div>;
+    return <div></div>;
   }
 
 
