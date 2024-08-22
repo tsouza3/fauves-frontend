@@ -37,11 +37,11 @@ import {
 } from "./checkoutStyles";
 
 const Checkout = () => {
-  const { eventId } = useParams();
+    const { eventId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { totalPrice, totalTickets, ticketId} = location.state;
+  const { totalPrice, totalTickets, ticketId } = location.state;
 
   const [eventData, setEventData] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -54,8 +54,6 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
   const [txid, setTxid] = useState(null);
-
-
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -96,12 +94,14 @@ const Checkout = () => {
     fetchUserProfile();
   }, []);
 
+  
+
   const handleGetPix = async () => {
     try {
       if (!totalPrice || !eventId || !userId || !ticketId || !totalTickets) {
         throw new Error("Todos os campos obrigatórios devem estar preenchidos.");
       }
-  
+
       const pixData = await getPix({ price: totalPrice, eventId, userId, quantidadeTickets: totalTickets, ticketId });
       console.log("Dados do PIX:", pixData); 
       setQRCode(pixData.qrCode);
@@ -113,27 +113,6 @@ const Checkout = () => {
       setError("Erro ao buscar o PIX. Verifique o valor e tente novamente.");
     }
   };
-  
-
-  const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
-    if (method === "pix") {
-      handleGetPix();
-    }
-  };
-
-  const copyToClipboard = () => {
-    if (pixCopiaCola) {
-      navigator.clipboard.writeText(pixCopiaCola);
-      alert("Código PIX copiado para a área de transferência!");
-    }
-  };
-
-  
-
-  if (!eventData) {
-    return <div></div>;
-  }
 
   useEffect(() => {
     if (txid) {
@@ -163,9 +142,24 @@ const Checkout = () => {
     }
   }, [txid, navigate]);
 
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+    if (method === "pix") {
+      handleGetPix();
+    }
+  };
+
+  const copyToClipboard = () => {
+    if (pixCopiaCola) {
+      navigator.clipboard.writeText(pixCopiaCola);
+      alert("Código PIX copiado para a área de transferência!");
+    }
+  };
+
   if (!eventData) {
-    return <div></div>;
+    return <div>Carregando...</div>;
   }
+
 
   return (
     <Section>
