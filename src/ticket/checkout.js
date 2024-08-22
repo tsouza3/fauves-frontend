@@ -223,6 +223,8 @@ const Checkout = () => {
                 <Label>Parcelamento</Label>
                 <Input width={"100%"} backgroundColor={"#f7f7f7"} readOnly value="Parcelamento não disponível" />
               </InputContainer>
+              <SubmitButton>Confirmar pagamento</SubmitButton>
+
             </>
           )}
           {paymentMethod === "pix" && (
@@ -246,7 +248,6 @@ const Checkout = () => {
               </PixWrapper>
             </>
           )}
-          <SubmitButton>Confirmar pagamento</SubmitButton>
         </FormWrapper>
       </FormContainer>
     </Section>
