@@ -15,6 +15,7 @@ import { getUserProfile } from "../services/userDataService.js";
 function Navbar({ backgroundColor }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState(null);
+  const [commercialProfiles, setCommercialProfiles] = useState([]);
 
   const token = document.cookie.replace(
     /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
@@ -27,6 +28,7 @@ function Navbar({ backgroundColor }) {
         if (token) {
           const userData = await getUserProfile({ token });
           setName(userData.name);
+          setCommercialProfiles(userData.commercialProfiles || []);
         }
       } catch (error) {
         console.error("Erro ao buscar os dados do perfil:", error);
@@ -34,11 +36,7 @@ function Navbar({ backgroundColor }) {
     };
 
     fetchUserProfile();
-    if (token) {
-      setLoggedIn(true);
-    } else {
-      setLoggedIn(false);
-    }
+    setLoggedIn(!!token);
   }, [token]);
 
   return (
@@ -53,7 +51,6 @@ function Navbar({ backgroundColor }) {
           {loggedIn ? (
             <Link to="/profile">
               <AccountLink>
-                {" "}
                 {typeof name === "string" &&
                   name.trim().split(" ")[0].charAt(0).toUpperCase() +
                     name.trim().split(" ")[0].slice(1)}
@@ -64,9 +61,15 @@ function Navbar({ backgroundColor }) {
               <AccountLink>Login</AccountLink>
             </Link>
           )}
-          <Link to="/selecteventtype">
-            <EventNavLink>Criar evento</EventNavLink>
-          </Link>
+          {commercialProfiles.length > 0 ? (
+            <Link to="/createevent">
+              <EventNavLink>Criar evento</EventNavLink>
+            </Link>
+          ) : (
+            <Link to="/commercialprofileerror">
+              <EventNavLink>Criar evento</EventNavLink>
+            </Link>
+          )}
         </NavLinks>
       </NavbarContainer>
       <Line />

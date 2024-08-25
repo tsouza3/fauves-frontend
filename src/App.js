@@ -22,6 +22,7 @@ import Equipe from './ticket/equipe'
 import Relatorios from "./analytics/relatorio";
 import Transacoes from "./analytics/transacoes";
 import Financeiro from "./analytics/financeiro";
+import CommercialProfileError from "./profile/commercialProfileError";
 
 function App() {
   return (
@@ -69,8 +70,9 @@ function App() {
         <Route path="/createcomercialprofile/success" element={<CreateEventSucess text={'Perfil comercial'} text2={'Crie o seu primeiro evento!'} text3={'Criar evento'} router={'createevent'} />} />
 
 
-
         <Route path="/profile/:profileId" element={<PublicProfile />} />
+        <Route path="/commercialprofileerror" element={<CommercialProfileError />} />
+
         <Route path="/checkout/:eventId" element={<Checkout />} />
 
         <Route path="/checkout/success" element={<CheckoutSucess />} />
