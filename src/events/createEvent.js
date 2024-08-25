@@ -23,6 +23,7 @@ import {
   InputWrapper,
   Select,
   ImageInput,
+  PhotoPreview,
 } from "./createEventStyles";
 import Camera from "../assets/icons/camera.svg";
 import { createEvent } from "../services/createEvent";
@@ -42,6 +43,7 @@ export function CreateEvent() {
   const [commercialProfiles, setCommercialProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState("");
   const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [coverPreview, setCoverPreview] = useState(null); // Estado para armazenar o preview da capa
 
   useEffect(() => {
     const fetchUserProfiles = async () => {
@@ -103,6 +105,17 @@ export function CreateEvent() {
       setAddressSuggestions(response.data);
     } catch (error) {
       console.error("Erro ao buscar endereço:", error);
+    }
+  };
+
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -192,19 +205,23 @@ export function CreateEvent() {
           <InputContainer>
             <label htmlFor="capaEventoInput" className="custom-file-upload">
               <PhotoContainer>
-                <Wrapper>
-                  <Img src={Camera} alt="camera icon" />
-                  <Text>
-                    Adicionar capa do evento
-                    <SubText>Tamanho recomendado 800 x 480</SubText>
-                  </Text>
-                </Wrapper>
-
+                {coverPreview ? (
+                  <PhotoPreview src={coverPreview} alt="Pré-visualização da capa" />
+                ) : (
+                  <Wrapper>
+                    <Img src={Camera} alt="camera icon" />
+                    <Text>
+                      Adicionar capa do evento
+                      <SubText>Tamanho recomendado 800 x 480</SubText>
+                    </Text>
+                  </Wrapper>
+                )}
                 <ImageInput
                   type="file"
                   id="capaEventoInput"
                   accept="image/*"
                   name="capaEvento"
+                  onChange={handleCoverChange}
                 />
               </PhotoContainer>
             </label>

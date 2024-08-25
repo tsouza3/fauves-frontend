@@ -161,6 +161,22 @@ export const InputContainer = styled.div`
   align-items: flex-start;
 `;
 
+export const PhotoPreview = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  transition: background-color 0.3s;
+
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(180, 50, 50, 0.8);
+  }
+`;
+
+
 export const Select = styled.select`
   box-sizing: border-box;
   width: ${(props) => props.width || "700px"};
