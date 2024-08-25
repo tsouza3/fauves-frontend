@@ -2,12 +2,16 @@ import React from 'react'
 
 import { Section, Container, CreateTicketContainer, CreateTicketText, Title } from './commercialProfileErrorStyles';
 
+import Navbar from '../home/navbar';
 import { IoAddCircle } from 'react-icons/io5';
 import { BiMessageSquareError } from "react-icons/bi";
 
 
 export default function CommercialProfileError () {
     return (
+        <>
+                    <Navbar />
+
         <Section>
          
             <Container>
@@ -24,5 +28,8 @@ export default function CommercialProfileError () {
         </CreateTicketContainer>
             </Container>
         </Section>
+        </>
+       
+        
     )
 }

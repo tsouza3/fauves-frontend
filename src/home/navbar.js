@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import FauvesLogo from "../assets/logo/FauvesLogo.svg";
 import { getUserProfile } from "../services/userDataService.js";
 
+
 function Navbar({ backgroundColor }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState(null);

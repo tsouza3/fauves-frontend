@@ -35,7 +35,7 @@ export default function EditProfile() {
     uf: "",
     numero: "",
   });
-  const [loading, setLoading] = useState(false); // Estado para controle de carregamento
+  const [loading, setLoading] = useState(false);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -81,30 +81,37 @@ export default function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Inicia o carregamento
+    setLoading(true);
     try {
       const token = getCookie("token");
-      console.log("Token encontrado:", token);
+      console.log("Token encontrado:", token); // Log do token
 
-      await updateUser(formData, token);
+      if (!token) {
+        console.error("Token não encontrado");
+        alert("Erro: Token não encontrado.");
+        return;
+      }
+
+      console.log("Enviando os seguintes dados:", formData); // Log dos dados do formulário
+      const response = await updateUser(formData, token);
+      console.log("Resposta do servidor:", response); // Log da resposta do servidor
+
       alert("Perfil atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
       alert("Erro ao atualizar perfil. Tente novamente.");
     } finally {
-      setLoading(false); // Encerra o carregamento
+      setLoading(false);
     }
   };
 
   const getCookie = (name) => {
-    const cookies = document.cookie.split(";");
-    for (let cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName.trim() === name) {
-        return cookieValue;
-      }
-    }
-    return null;
+    const cookieValue = document.cookie.replace(
+      /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+    console.log("Valor do cookie:", cookieValue); // Log do valor do cookie
+    return cookieValue;
   };
 
   return (
