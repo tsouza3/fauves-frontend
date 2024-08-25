@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { fetchAddressByCep } from "../services/buscaCep";
 import { updateUser } from "../services/updateUser";
 import {
@@ -34,6 +33,8 @@ export default function EditProfile() {
     cidade: "",
     uf: "",
     numero: "",
+    cpf: "",
+    dataNascimento: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -79,12 +80,10 @@ export default function EditProfile() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setLoading(true);
     try {
       const token = getCookie("token");
-      console.log("Token encontrado:", token); // Log do token
 
       if (!token) {
         console.error("Token não encontrado");
@@ -92,33 +91,27 @@ export default function EditProfile() {
         return;
       }
 
-      console.log("Enviando os seguintes dados:", formData); // Log dos dados do formulário
       const response = await updateUser(formData, token);
-      console.log("Resposta do servidor:", response); // Log da resposta do servidor
 
-      alert("Perfil atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
-      alert("Erro ao atualizar perfil. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
 
   const getCookie = (name) => {
-    const cookieValue = document.cookie.replace(
-      /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-      "$1"
-    );
-    console.log("Valor do cookie:", cookieValue); // Log do valor do cookie
-    return cookieValue;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
   };
 
   return (
     <>
       <Navbar />
       <Section>
-        <FormWrapper onSubmit={handleSubmit}>
+        <FormWrapper>
           <Container>
             <Title>Editar perfil</Title>
             <InputContainer>
@@ -156,7 +149,6 @@ export default function EditProfile() {
                 type="text"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
                 readOnly
                 backgroundColor={"#f7f7f7"}
               />
@@ -178,7 +170,7 @@ export default function EditProfile() {
                 type="text"
                 name="celular"
                 mask={"(**) * ****-****"}
-                placeholder="(__) _ ____-____ "
+                placeholder="(__) _ ____-____"
                 value={formData.celular}
                 onChange={handleInputChange}
               />
@@ -266,7 +258,7 @@ export default function EditProfile() {
               />
             </InputContainer>
           </Container>
-          <SubmitButton type="submit">
+          <SubmitButton onClick={handleSubmit}>
             {loading ? <Loader /> : "Salvar alterações"}
           </SubmitButton>
         </FormWrapper>
