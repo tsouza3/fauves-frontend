@@ -51,7 +51,7 @@ export default function GetEventsByProfile({ tipo }) {
     <EventSection>
       <EventContainer>
         <Wrapper>
-          {events.length === 0 && <div>Nenhum evento encontrado.</div>}
+          {events.length === 0 && <div></div>}
           {events.map((event) => (
             <TextContainer key={event.id}>
               <Banner
