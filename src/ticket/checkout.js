@@ -35,6 +35,7 @@ import {
   BlurredImage,
   SubmitButton
 } from "./checkoutStyles";
+import { SuccessAlert } from '../events/success'
 
 const Checkout = () => {
     const { eventId } = useParams();
@@ -52,6 +53,8 @@ const Checkout = () => {
   const [pixCopiaCola, setPixCopiaCola] = useState(null);
   const [ticketGenerated, setTicketGenerated] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
   const [error, setError] = useState(null);
   const [txid, setTxid] = useState(null);
 
@@ -152,7 +155,7 @@ const Checkout = () => {
   const copyToClipboard = () => {
     if (pixCopiaCola) {
       navigator.clipboard.writeText(pixCopiaCola);
-      alert("Código PIX copiado para a área de transferência!");
+      setShowSuccessAlert(true); // Mostra o alerta de sucesso
     }
   };
 
@@ -254,6 +257,9 @@ const Checkout = () => {
                   Aguardando pagamento do PIX. <br />
                   Digitalize o QR Code ou copie o código.
                 </PixText>
+                {showSuccessAlert && (
+                  <div style={{width: '50%', marginTop: '1em', alignSelf: 'center'}}><SuccessAlert message="Código PIX copiado com sucesso!" /> </div>// Exibe o alerta de sucesso
+                )}
                 <SubmitButton width={"50%"} onClick={copyToClipboard}>Copiar código PIX</SubmitButton>
               </PixWrapper>
             </>
