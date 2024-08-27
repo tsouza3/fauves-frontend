@@ -20,7 +20,8 @@ import {
 import Navbar from "../home/navbar";
 import Rodape from '../rodape/rodape';
 import Loader from "../Loader/loader"; 
-import { ErrorAlert } from '../events/error'
+import { ErrorAlert } from '../events/error';
+import { SuccessAlert } from '../events/success';
 
 export default function EditProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -38,6 +39,8 @@ export default function EditProfile() {
     dataNascimento: "",
   });
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -77,6 +80,7 @@ export default function EditProfile() {
         }));
       } catch (error) {
         console.error("Erro ao buscar CEP:", error);
+        setErrorMessage("Erro ao buscar CEP");
       }
     }
   };
@@ -87,15 +91,16 @@ export default function EditProfile() {
       const token = getCookie("token");
 
       if (!token) {
-        console.error("Token não encontrado");
-        alert("Erro: Token não encontrado.");
+        setErrorMessage("Token não encontrado");
         return;
       }
 
       const response = await updateUser(formData, token);
 
+      setSuccessMessage("Perfil atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
+      setErrorMessage("Erro ao atualizar perfil, verifique os dados e tente novamente");
     } finally {
       setLoading(false);
     }
@@ -262,6 +267,8 @@ export default function EditProfile() {
           <SubmitButton onClick={handleSubmit}>
             {loading ? <Loader /> : "Salvar alterações"}
           </SubmitButton>
+          {successMessage && <div style={{marginTop: '1em', width: '100%' }}><SuccessAlert message={successMessage} /></div>}
+          {errorMessage && <div style={{marginTop: '1em', width: '100%'  }}><ErrorAlert error={errorMessage} /></div>}
         </FormWrapper>
       </Section>
       <Rodape />
