@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { MdAdd } from "react-icons/md";
 import { GiTicket } from "react-icons/gi";
 import { IoMdStar } from "react-icons/io";
+import { IoEyeOutline } from "react-icons/io5";
+import { MdOutlineQrCode } from "react-icons/md";
+
+
 import Navbar from "../home/navbar";
 import { buscarEventosUsuario } from "../services/buscarEventosUsuario";
 import { getUserProfile } from "../services/userDataService";

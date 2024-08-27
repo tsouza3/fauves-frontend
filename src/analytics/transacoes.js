@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { useParams } from "react-router-dom";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import Navbar from "../home/navbar";
 import {
   Section,
@@ -31,12 +33,28 @@ export default function Transacoes() {
         setEventData(event);
 
         const cobrancasPagas = await consultarTransacoes(eventId);
-        const transacoesFormatadas = cobrancasPagas.map((cobranca) => ({
-          txid: cobranca.txid,
-          valor: cobranca.valor.original,
-          horario: cobranca.pix[0]?.horario,
-          evento: event.nomeEvento,
-        }));
+        const transacoesFormatadas = cobrancasPagas.map((cobranca) => {
+          // Converte a data/hora para o formato desejado em português
+          const horarioFormatado = cobranca.pix[0]?.horario
+            ? format(new Date(cobranca.pix[0].horario), "dd MMM yyyy, HH:mm", {
+                locale: ptBR,
+              })
+            : "";
+
+          // Abrevia o mês para as 3 primeiras letras com a primeira letra maiúscula
+          const horarioAbreviado = horarioFormatado.replace(
+            /(\s)(\w{3})(\s)/,
+            (_, espaço1, mês, espaço2) => `${espaço1}${mês.charAt(0).toUpperCase() + mês.slice(1).toLowerCase()}${espaço2}`
+          );
+
+          return {
+            txid: cobranca.txid,
+            valor: cobranca.valor.original,
+            horario: horarioAbreviado,
+            evento: event.nomeEvento,
+            comprador: cobranca.comprador || "N/A", // Supondo que exista um campo 'comprador'
+          };
+        });
         setTransacoes(transacoesFormatadas);
       } catch (error) {
         console.error("Erro ao buscar dados:", error.message);
@@ -81,12 +99,12 @@ export default function Transacoes() {
                     <Items>{transacao.evento}</Items>
                     <Items>{transacao.comprador}</Items>
                     <Items>{transacao.horario}</Items>
-                    <Items>{transacao.valor}</Items>
+                    <Items>R$ {transacao.valor}</Items>
                   </PlanilhaItems>
                 ))
               ) : (
                 <PlanilhaItems>
-                  <Items></Items>
+                  <Items>Nenhuma transação encontrada</Items>
                 </PlanilhaItems>
               )}
             </PlanilhaWrapper>

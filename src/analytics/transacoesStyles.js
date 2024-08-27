@@ -63,6 +63,8 @@ export const PlanilhaWrapper = styled.div`
   border: 3px solid #f1f1f1;
   border-radius: 15px;
   display: flex;
+
+
   flex-direction: column;
 `;
 
