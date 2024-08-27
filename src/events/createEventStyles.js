@@ -161,18 +161,40 @@ export const InputContainer = styled.div`
   align-items: flex-start;
 `;
 
-export const PhotoPreview = styled.img`
+
+export const PhotoPreview = styled.div`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  position: relative;
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: transparent;
-  transition: background-color 0.3s;
-
   cursor: pointer;
-  &:hover {
-    background-color: rgba(180, 50, 50, 0.8);
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Cor preta com transparência */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    position: relative;
+    z-index: 0;
   }
 `;
 

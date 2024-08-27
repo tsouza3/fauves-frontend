@@ -19,6 +19,7 @@ import {
   PriceContainer,
   PriceText
 } from "./createTicketStyles";
+import { ErrorAlert } from '../events/error'
 import Rodape from "../rodape/rodape";
 import { createTicket } from "../services/CreateTicket";
 import Navbar from "../home/navbar";
@@ -228,7 +229,8 @@ export default function CreateTicket() {
             <Span></Span>
 
             <SubmitButton> {loading ? <Loader /> : "Criar ingresso"}</SubmitButton>
-          
+            {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar ingresso'}/></div>}
+
           </Form>
         </Container>
         <Rodape />

@@ -8,6 +8,8 @@ import { buscarEventosUsuario } from "../services/buscarEventosUsuario";
 import { getUserProfile } from "../services/userDataService";
 import Rodape from "../rodape/rodape";
 import QrCodeComponent from "../ticket/qrCodeComponent";
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   TicketContainer,
   CashContainer,
@@ -40,6 +42,12 @@ import {
   CenterContainer,
 } from "./userHomeStyles";
 import { Profile } from "./profile";
+
+// Função para formatar a data
+const formatDate = (dateString) => {
+  const date = parseISO(dateString);
+  return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+};
 
 export default function UserHome() {
   const token = document.cookie.replace(
@@ -76,118 +84,116 @@ export default function UserHome() {
       <Navbar />
       <Profile />
       <CenterContainer>
-      <AllContainer>
-        <Container>
-          <Text>
-            O Seu perfil ainda está incompleto. Preencha os dados de{" "}
-            <strong>Endereço.</strong>
-          </Text>
-          <EditProfileBtn to="/editprofile">Concluir cadastro</EditProfileBtn>
-        </Container>
+        <AllContainer>
+          <Container>
+            <Text>
+              O Seu perfil ainda está incompleto. Preencha os dados de{" "}
+              <strong>Endereço.</strong>
+            </Text>
+            <EditProfileBtn to="/editprofile">Concluir cadastro</EditProfileBtn>
+          </Container>
 
-        <CashContainer>
-          <TextContainer>FauvesCASH</TextContainer>
-        </CashContainer>
-        <Title>Meus perfis comerciais</Title>
-        <ComercialContainer>
-          <Perfis>
-            <Link to="/createproductorprofile">
-              <CreateLink>
-                <MdAdd
-                  style={{
-                    height: "30px",
-                    width: "30px",
-                    color: "#ef4118",
-                  }}
-                ></MdAdd>
-              </CreateLink>
-            </Link>
-            {userData &&
-              userData.commercialProfiles &&
-              userData.commercialProfiles.map((profile, index) => (
-                <ComercialProfiles key={index}>
-                  <Link
-                    to={`/profile/${profile._id}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Img
-                      src={
-                        profile.profilePhoto
-                          ? `https://fauvesapi.thiagosouzadev.com/api/users/${profile.profilePhoto}`
-                          : null
-                      }
-                      style={{
-                        backgroundColor: profile.profilePhoto
-                          ? "transparent"
-                          : "#f3f8fc",
-                      }}
-                    />
-                  </Link>
-                </ComercialProfiles>
-              ))}
-          </Perfis>
-        </ComercialContainer>
-        <Title>Meus ingressos</Title>
-        <TicketContainer>
-
-        <QrCodeComponent></QrCodeComponent>
-
-        </TicketContainer>
-
-        <Title>Próximos eventos</Title>
-        
-        <EventSection>
-          <EventContainer>
-            {events.map((event, index) => (
-              <div key={event._id}>
-                <EventWrapper>
-                  <Banner
-                    src={`https://fauvesapi.thiagosouzadev.com/api/users/${event.capaEvento}`}
-                  ></Banner>
-                  <Txt>
-                    <PubAndDelContainer>
-                      <Public>Publicado</Public>
-                      <Delete>Excluir</Delete>
-                    </PubAndDelContainer>
-
+          <CashContainer>
+            <TextContainer>FauvesCASH</TextContainer>
+          </CashContainer>
+          <Title>Meus perfis comerciais</Title>
+          <ComercialContainer>
+            <Perfis>
+              <Link to="/createproductorprofile">
+                <CreateLink>
+                  <MdAdd
+                    style={{
+                      height: "30px",
+                      width: "30px",
+                      color: "#ef4118",
+                    }}
+                  ></MdAdd>
+                </CreateLink>
+              </Link>
+              {userData &&
+                userData.commercialProfiles &&
+                userData.commercialProfiles.map((profile, index) => (
+                  <ComercialProfiles key={index}>
                     <Link
-                      to={`/eventedit/${event._id}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={`/profile/${profile._id}`}
+                      style={{ textDecoration: "none" }}
                     >
-                      <TxtContainer>
-                        <Name>{event.nomeEvento}</Name>
-                        <Date>{event.dataInicio}</Date>
-                      </TxtContainer>
+                      <Img
+                        src={
+                          profile.profilePhoto
+                            ? `https://fauvesapi.thiagosouzadev.com/api/users/${profile.profilePhoto}`
+                            : null
+                        }
+                        style={{
+                          backgroundColor: profile.profilePhoto
+                            ? "transparent"
+                            : "#f3f8fc",
+                        }}
+                      />
                     </Link>
+                  </ComercialProfiles>
+                ))}
+            </Perfis>
+          </ComercialContainer>
+          <Title>Meus ingressos</Title>
+          <TicketContainer>
+            <QrCodeComponent></QrCodeComponent>
+          </TicketContainer>
 
-                    <QntAndPermission>
-                      <QntTicket>
-                        <GiTicket
-                          style={{ marginRight: "7px" }}
-                          size="23px"
-                          color="#d75d36"
-                        />
-                        {calcularQntIngressos(event)} ingressos{" "}
-                      </QntTicket>
-                      <Permission>
-                        {" "}
-                        <IoMdStar
-                          style={{ marginRight: "7px" }}
-                          size="23px"
-                          color="#d75d36"
-                        />
-                        <span style={{ verticalAlign: "middle" }}>
-                          Administrador
-                        </span>
-                      </Permission>
-                    </QntAndPermission>
-                  </Txt>
-                </EventWrapper>
-              </div>
-            ))}
-          </EventContainer>
-        </EventSection>
-      </AllContainer>
+          <Title>Próximos eventos</Title>
+          
+          <EventSection>
+            <EventContainer>
+              {events.map((event, index) => (
+                <div key={event._id}>
+                  <EventWrapper>
+                    <Banner
+                      src={`https://fauvesapi.thiagosouzadev.com/api/users/${event.capaEvento}`}
+                    ></Banner>
+                    <Txt>
+                      <PubAndDelContainer>
+                        <Public>Publicado</Public>
+                        <Delete>Excluir</Delete>
+                      </PubAndDelContainer>
+
+                      <Link
+                        to={`/eventedit/${event._id}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <TxtContainer>
+                          <Name>{event.nomeEvento}</Name>
+                          <Date>{formatDate(event.dataInicio)}</Date>
+                        </TxtContainer>
+                      </Link>
+
+                      <QntAndPermission>
+                        <QntTicket>
+                          <GiTicket
+                            style={{ marginRight: "7px" }}
+                            size="23px"
+                            color="#d75d36"
+                          />
+                          {calcularQntIngressos(event)} ingressos{" "}
+                        </QntTicket>
+                        <Permission>
+                          {" "}
+                          <IoMdStar
+                            style={{ marginRight: "7px" }}
+                            size="23px"
+                            color="#d75d36"
+                          />
+                          <span style={{ verticalAlign: "middle" }}>
+                            Administrador
+                          </span>
+                        </Permission>
+                      </QntAndPermission>
+                    </Txt>
+                  </EventWrapper>
+                </div>
+              ))}
+            </EventContainer>
+          </EventSection>
+        </AllContainer>
       </CenterContainer>
     
       <Rodape />

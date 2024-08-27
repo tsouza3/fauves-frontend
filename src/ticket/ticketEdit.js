@@ -16,9 +16,10 @@ import {
   Option,
   Text,
   SubmitButton,
-  Message,
 } from "./ticketEditStyles";
 import Loader from "../Loader/loader";
+import { SuccessAlert } from "../events/success";  // Componente de sucesso
+import { ErrorAlert } from "../events/error";      // Componente de erro
 
 export default function TicketEdit({ eventId, ticketId }) {
   const token = document.cookie.replace(
@@ -72,17 +73,16 @@ export default function TicketEdit({ eventId, ticketId }) {
 
     try {
       await updateTicket(token, eventId, ticketId, ticketData);
-      setMessage({ type: "success", text: "Ticket atualizado com sucesso!" });
-      handleClose(); // Fechar o modal após a atualização bem-sucedida
+      setMessage({ type: "success", text: "Ingresso atualizado com sucesso!" });
     } catch (error) {
-      setMessage({ type: "error", text: error.message });
+      setMessage({ type: "error", text: 'Erro ao atualizar ingresso.'});
     } finally {
       setLoading(false);
     }
   };
 
   const handleClose = () => {
-    setIsOpen(false); // Define isOpen como false para fechar o modal
+    setIsOpen(false); 
   };
 
   useEffect(() => {
@@ -188,6 +188,12 @@ export default function TicketEdit({ eventId, ticketId }) {
               {loading ? <Loader /> : "Salvar alterações"}
             </SubmitButton>
           </form>
+          {message && message.type === "success" && (
+           <div style={{ marginTop: '1em', width: '91%', alignSelf: 'center', marginBottom: '2em' }}><SuccessAlert message={message.text} /></div> 
+          )}
+          {message && message.type === "error" && (
+            <div style={{ marginTop: '1em', width: '91%', alignSelf: 'center', marginBottom: '2em' }}><ErrorAlert error={message.text} /></div>
+          )}
         </Container>
       </ModalContent>
     </ModalWrapper>

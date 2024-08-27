@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   EventContainer,
   Wrapper,
@@ -11,7 +13,13 @@ import {
   Location,
   EventSection,
 } from "./getEventsByProfileIdStyles";
-import { listarEventosPorData } from "../services/listarEventosPorData"; 
+import { listarEventosPorData } from "../services/listarEventosPorData";
+
+// Função para formatar a data
+const formatDate = (dateString) => {
+  const date = parseISO(dateString);
+  return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+};
 
 export default function GetEventsByProfile({ tipo }) {
   const { profileId } = useParams();
@@ -43,7 +51,7 @@ export default function GetEventsByProfile({ tipo }) {
     <EventSection>
       <EventContainer>
         <Wrapper>
-          {events.length === 0 && <div></div>}
+          {events.length === 0 && <div>Nenhum evento encontrado.</div>}
           {events.map((event) => (
             <TextContainer key={event.id}>
               <Banner
@@ -54,7 +62,7 @@ export default function GetEventsByProfile({ tipo }) {
                   to={`/event/${event.id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <Text>{event.dataInicio}</Text>
+                  <Text>{formatDate(event.dataInicio)}</Text>
                   <SubText>{event.nomeEvento}</SubText>
                   <Location>{event.localDoEvento}</Location>
                 </Link>
@@ -63,7 +71,7 @@ export default function GetEventsByProfile({ tipo }) {
           ))}
         </Wrapper>
       </EventContainer>
-      {error && <div></div>}
+      {error && <div> </div>}
     </EventSection>
   );
 }

@@ -7,7 +7,7 @@ export const updateTicket = async (token, eventId, ticketId, ticketData) => {
       ticketData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // certifique-se de ter o token definido aqui
+          Authorization: `Bearer ${token}`, 
         },
       },
     );

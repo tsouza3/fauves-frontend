@@ -20,6 +20,7 @@ import {
 import Navbar from "../home/navbar";
 import Rodape from '../rodape/rodape';
 import Loader from "../Loader/loader"; 
+import { ErrorAlert } from '../events/error'
 
 export default function EditProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);

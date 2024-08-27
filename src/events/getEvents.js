@@ -12,6 +12,8 @@ import {
   EventSection,
 } from "./getEventsStyles";
 import { getEvents } from "../services/getEvents";
+import { format, parseISO, isToday, isTomorrow, isThisWeek, isThisMonth } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function GetEvents() {
   const token = document.cookie.replace(
@@ -37,6 +39,12 @@ export default function GetEvents() {
     fetchData();
   }, [token]);
 
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    const date = parseISO(dateString);
+    return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+  };
+
   return (
     <EventSection>
       <EventContainer>
@@ -51,7 +59,7 @@ export default function GetEvents() {
                   to={`/event/${event._id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <Text>{event.dataInicio}</Text>
+                  <Text>{formatDate(event.dataInicio)}</Text>
                   <SubText>{event.nomeEvento}</SubText>
                   <Location>{event.localDoEvento}</Location>
                 </Link>

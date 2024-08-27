@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getEventById } from "../services/getEventsById";
 import { getUserDataById } from "../services/getUserDataById";
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import Rodape from "../rodape/rodape";
-
 import { FaGreaterThan } from "react-icons/fa6";
-
 
 import {
   Section,
@@ -55,6 +55,11 @@ export default function EventDetails() {
     fetchEventData();
   }, [eventId]);
 
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    const date = parseISO(dateString);
+    return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -68,17 +73,18 @@ export default function EventDetails() {
     <>
       <Navbar />
       <Section>
-        <BlurContainer
-        ><BlurredImage           src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
-        ></BlurredImage></BlurContainer>
-        
+        <BlurContainer>
+          <BlurredImage
+            src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
+          ></BlurredImage>
+        </BlurContainer>
 
         <EventImage
           src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
         />
         <EventInformation>
           <TextWrapper>
-            <Text>{eventData.dataInicio}</Text>
+            <Text>{formatDate(eventData.dataInicio)}</Text>
             <SubText>{eventData.nomeEvento}</SubText>
           </TextWrapper>
         </EventInformation>
@@ -91,34 +97,32 @@ export default function EventDetails() {
         <CreatorText>Produtor</CreatorText>
         {userData && profileId && (
           <EventProductor>
-            <div style={{display: 'flex', alignItems: 'center'}}><Link
-              style={{ textDecoration: "none" }}
-              to={`/profile/${profileId}`}
-            >
-              <UserIcon
-                src={`https://fauvesapi.thiagosouzadev.com/api/users/${userData.profilePhoto}`}
-              />
-            </Link>
-            <Link
-              style={{ textDecoration: "none" }}
-              to={`/profile/${profileId}`}
-            >
-              <UserName>{userData.nomeEmpresa}</UserName>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Link
+                style={{ textDecoration: "none" }}
+                to={`/profile/${profileId}`}
+              >
+                <UserIcon
+                  src={`https://fauvesapi.thiagosouzadev.com/api/users/${userData.profilePhoto}`}
+                />
               </Link>
-
+              <Link
+                style={{ textDecoration: "none" }}
+                to={`/profile/${profileId}`}
+              >
+                <UserName>{userData.nomeEmpresa}</UserName>
+              </Link>
             </div>
             <Link
               style={{ textDecoration: "none" }}
               to={`/profile/${profileId}`}
-            >            <FaGreaterThan style={{marginRight: '2em'}} size='20px' color='#4b4b4b' />
+            >
+              <FaGreaterThan style={{ marginRight: '2em' }} size='20px' color='#4b4b4b' />
             </Link>
           </EventProductor>
         )}
-              <Rodape />
-
+        <Rodape />
       </Section>
-
-
     </>
   );
 }

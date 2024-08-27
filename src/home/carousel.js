@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getEvents } from "../services/getEvents";
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 import {
   Container,
   LeftDiv,
@@ -47,7 +50,11 @@ export default function Carousel() {
     );
   };
 
-  const handleDetailsClick = () => {};
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    const date = parseISO(dateString);
+    return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+  };
 
   return (
     <Container>
@@ -61,20 +68,19 @@ export default function Carousel() {
       <RightDiv>
         {events.map((event, index) => (
           <TextWrapper
-            key={event.id}
+            key={event._id}
             isVisible={index === currentIndex}
             style={{
               display: index === currentIndex ? "flex" : "none",
               flexDirection: "column",
             }}
           >
-            {event.dataInicio}
+            <div>{formatDate(event.dataInicio)}</div>
             <SubTextWrapper>{event.nomeEvento}</SubTextWrapper>
             <Location>{event.localDoEvento}</Location>
             <BtnContainer>
               <Button
                 to={`/event/${event._id}`}
-                onClick={handleDetailsClick}
               ></Button>
               <SkipBtnContainer>
                 <Btn onClick={goToPrevSlide}>&#10094;</Btn>

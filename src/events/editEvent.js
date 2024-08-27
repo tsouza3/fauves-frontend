@@ -3,8 +3,12 @@ import { useParams, useLocation, Link } from "react-router-dom";
 import Navbar from "../home/navbar";
 import Rodape from "../rodape/rodape";
 import EmitirCortesia from "../ticket/emitirCortesia";
+import UpdateEventModal from "./updateEvent";
+import TicketComponent from "../ticket/ticketComponent";
 import { getEventById } from "../services/getEventsById";
 import { deleteEvent } from "../services/deleteEvents";
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   ImageContainer,
   Section,
@@ -28,27 +32,26 @@ import {
   DeleteAndEdit,
   Edit,
 } from "./editEventStyles";
-import TicketComponent from "../ticket/ticketComponent";
-import UpdateEventModal from "./updateEvent";
 import { AiOutlineTeam } from "react-icons/ai";
-import { TbTransactionDollar } from "react-icons/tb";
-import { TbReportSearch } from "react-icons/tb";
-import { TbPigMoney } from "react-icons/tb";
+import { TbTransactionDollar, TbReportSearch, TbPigMoney, TbFilterDiscount } from "react-icons/tb";
 import { IoAddCircle } from "react-icons/io5";
 import { BiSolidDiscount } from "react-icons/bi";
-import { TbFilterDiscount } from "react-icons/tb";
 import { RiTeamLine } from "react-icons/ri";
 import { FaGreaterThan } from "react-icons/fa";
+
+// Função para formatar a data
+const formatDate = (dateString) => {
+  const date = parseISO(dateString);
+  return format(date, "EEE, dd MMM - HH:mm", { locale: ptBR }).toUpperCase();
+};
 
 export default function EditEvent() {
   const { eventId } = useParams();
   const [eventData, setEventData] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Modal de edição
-  const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false); // Modal de edição
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const location = useLocation(); // Obtenha a localização atual
-
+  const location = useLocation();
   const token = document.cookie.replace(
     /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
     "$1"
@@ -70,14 +73,13 @@ export default function EditEvent() {
   const handleDeleteEvent = async () => {
     try {
       await deleteEvent(token, eventId);
-      window.location.reload(); 
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao excluir o evento:", error);
     }
   };
 
-  const openEditModal = (event) => {
-    setSelectedEvent(event);
+  const openEditModal = () => {
     setIsEditModalOpen(true);
   };
 
@@ -86,8 +88,7 @@ export default function EditEvent() {
     setSelectedEvent(null);
   };
 
-  const openEditTicketModal = (event) => {
-    setSelectedEvent(event);
+  const openEditTicketModal = () => {
     setIsEditTicketModalOpen(true);
   };
 
@@ -103,21 +104,22 @@ export default function EditEvent() {
         {eventData && (
           <ImageContainer
             src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
-          ></ImageContainer>
+            alt={eventData.nomeEvento}
+          />
         )}
 
         <SubContainer>
           <PubAndDelContainer>
             <Public>Publicado</Public>
             <DeleteAndEdit>
-              <Edit onClick={() => openEditModal(eventData)}>Editar |</Edit>
-              <Delete onClick={handleDeleteEvent} style={{marginLeft: '3px'}}> Excluir evento</Delete>
+              <Edit onClick={openEditModal}>Editar |</Edit>
+              <Delete onClick={handleDeleteEvent}>Excluir evento</Delete>
             </DeleteAndEdit>
           </PubAndDelContainer>
           {eventData && (
             <div>
               <Name>{eventData.nomeEvento}</Name>
-              <Date>{eventData.dataInicio}</Date>
+              <Date>{formatDate(eventData.dataInicio)}</Date>
             </div>
           )}
         </SubContainer>
@@ -136,70 +138,64 @@ export default function EditEvent() {
         <Wrapper>
           <Title>Geral</Title>
           <OptionsContainer>
-          <Link style={{textDecoration: 'none'}} to={`/team/${eventId}`}>            
-
-            <Options>
-              <AiOutlineTeam size="40px" color="#7b919f" />
-              Equipe
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-            </Options>
+            <Link to={`/team/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <AiOutlineTeam size="40px" color="#7b919f" />
+                Equipe
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
             </Link>
 
             <hr color="#ccc" />
-            <Link style={{textDecoration: 'none'}} to={`/transactions/${eventId}`}>            
-
-            <Options>
-              <TbTransactionDollar size="40px" color="#7b919f" />
-              Transações
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
-            </Options>
+            <Link to={`/transactions/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <TbTransactionDollar size="40px" color="#7b919f" />
+                Transações
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
             </Link>
             <hr color="#ccc" />
-            <Link style={{textDecoration: 'none'}} to={`/reports/${eventId}`}>     
-            
-            <Options>
-              <TbReportSearch size="40px" color="#7b919f" />
-              Relatórios
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
-            </Options>       </Link>
+            <Link to={`/reports/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <TbReportSearch size="40px" color="#7b919f" />
+                Relatórios
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
+            </Link>
 
             <hr color="#ccc" />
-            <Link style={{textDecoration: 'none'}} to={`/financial/${eventId}`}>            
-
-            <Options>
-              <TbPigMoney size="40px" color="#7b919f" />
-              Financeiro
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
-            </Options>
+            <Link to={`/financial/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <TbPigMoney size="40px" color="#7b919f" />
+                Financeiro
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
             </Link>
           </OptionsContainer>
         </Wrapper>
         <Wrapper>
           <Title>Ingressos</Title>
           <OptionsContainer>
-            <Options>
-              
-              <RiTeamLine size="40px" color="#7b919f" />
-              Participantes
-             <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
-            </Options>
+            <Link to={`/participants/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <RiTeamLine size="40px" color="#7b919f" />
+                Participantes
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
+            </Link>
             <hr color="#ccc" />
-            <Options>
-              <TbFilterDiscount size="40px" color="#7b919f" />
-              Cupons de desconto
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
-            </Options>
+            <Link to={`/discounts/${eventId}`} style={{ textDecoration: 'none' }}>
+              <Options>
+                <TbFilterDiscount size="40px" color="#7b919f" />
+                Cupons de desconto
+                <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
+              </Options>
+            </Link>
             <hr color="#ccc" />
-            <Options onClick={() => openEditTicketModal(eventData)}>
+            <Options onClick={openEditTicketModal}>
               <BiSolidDiscount size="40px" color="#7b919f" />
               Emitir cortesia
-              <FaGreaterThan style={{marginRight: '1em', alignSelf: 'center', marginLeft: 'auto'}} size='19px' color='#7b919f' />
-
+              <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
             </Options>
           </OptionsContainer>
         </Wrapper>
@@ -211,19 +207,18 @@ export default function EditEvent() {
             Criar ingresso
           </CreateTicketText>
         </CreateTicketContainer>
-        
         <Rodape />
       </Section>
       {isEditModalOpen && (
         <UpdateEventModal
-          event={selectedEvent}
+          event={eventData}
           onClose={closeEditModal}
           token={token}
         />
       )}
       {isEditTicketModalOpen && (
         <EmitirCortesia
-          event={selectedEvent}
+          event={eventData}
           onClose={closeEditTicketModal}
           token={token}
         />

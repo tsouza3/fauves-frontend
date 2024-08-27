@@ -4,7 +4,10 @@ import { GiTicket } from "react-icons/gi";
 import { IoMdStar } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
 import { MdOutlineQrCode } from "react-icons/md";
-import { updateUserPermission } from '../services/permissionService'; 
+import { updateUserPermission } from '../services/permissionService';
+
+import { ErrorAlert } from '../events/error';
+import { SuccessAlert } from '../events/success';
 
 import {
   ModalContent,
@@ -55,9 +58,9 @@ export default function AddMemberTeam({ onClose }) {
 
     try {
       const response = await updateUserPermission(token, email, selectedPermission, eventId);
-      setMessage(response.message);
+      setMessage('Membro adicionado á equipe com sucesso');
     } catch (err) {
-      setError(err.message || "Erro ao atualizar a permissão");
+      setError('Erro ao adicionar membro á equipe');
     } finally {
       setLoading(false);
     }
@@ -120,6 +123,9 @@ export default function AddMemberTeam({ onClose }) {
               {loading ? <Loader /> : "Adicionar"}
             </SubmitButton>
           </Wrapper>
+          {/* Renderizar Alert com base na mensagem e erro */}
+          {error && <div style={{ width: '91%', alignSelf: 'center', marginBottom: '2em' }}><ErrorAlert error={error} /></div>}
+          {message && <div style={{ width: '91%', alignSelf: 'center', marginBottom: '2em' }}><SuccessAlert message={message} /></div>}
         </Container>
       </ModalContent>
     </ModalWrapper>

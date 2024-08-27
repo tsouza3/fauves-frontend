@@ -5,6 +5,8 @@ import { Profile } from "../userhome/profile";
 import Loader from "../Loader/loader";
 import { useNavigate, useLocation } from "react-router-dom";
 import Rodape from "../rodape/rodape";
+import {ErrorAlert} from './error'
+
 import {
   Section,
   Container,
@@ -206,7 +208,9 @@ export function CreateEvent() {
             <label htmlFor="capaEventoInput" className="custom-file-upload">
               <PhotoContainer>
                 {coverPreview ? (
-                  <PhotoPreview src={coverPreview} alt="Pré-visualização da capa" />
+                  <PhotoPreview >
+                    <img src={coverPreview}></img>
+                  </PhotoPreview>
                 ) : (
                   <Wrapper>
                     <Img src={Camera} alt="camera icon" />
@@ -229,7 +233,7 @@ export function CreateEvent() {
           <SubmitButton type="submit">
             {loading ? <Loader /> : "Criar evento"}
           </SubmitButton>
-          {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+          {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar perfil comercial'}/></div>}
         </Form>
       </Container>
       <Rodape />

@@ -17,6 +17,8 @@ import {
   ButtonContainer,
 } from "./createProductorProfileStyles";
 
+import { ErrorAlert} from '../events/error'
+
 import Rodape from '../rodape/rodape'
 
 import { useNavigate } from "react-router-dom";
@@ -172,7 +174,7 @@ export default function CreateProductorProfile() {
           <SubmitBtn type="submit">
             {loading ? <Loader /> : "Criar"}
           </SubmitBtn>
-          {errorMessage && <p>{errorMessage}</p>}
+          {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar perfil comercial'}/></div>}
         </Form>
       </Container>
       <Rodape/>

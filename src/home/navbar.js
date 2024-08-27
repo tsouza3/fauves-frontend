@@ -63,7 +63,7 @@ function Navbar({ backgroundColor }) {
             </Link>
           )}
           {commercialProfiles.length > 0 ? (
-            <Link to="/createevent">
+            <Link to="/selecteventtype">
               <EventNavLink>Criar evento</EventNavLink>
             </Link>
           ) : (
