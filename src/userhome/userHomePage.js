@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { MdAdd } from "react-icons/md";
-import { GiTicket } from "react-icons/gi";
-import { IoMdStar } from "react-icons/io";
-import { IoEyeOutline } from "react-icons/io5";
-import { MdOutlineQrCode } from "react-icons/md";
-
-
-import Navbar from "../home/navbar";
-import { buscarEventosUsuario } from "../services/buscarEventosUsuario";
-import { getUserProfile } from "../services/userDataService";
-import Rodape from "../rodape/rodape";
-import QrCodeComponent from "../ticket/qrCodeComponent";
+// UserHome.js
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { MdAdd } from 'react-icons/md';
+import { GiTicket } from 'react-icons/gi';
+import { IoMdStar } from 'react-icons/io';
+import { IoEyeOutline } from 'react-icons/io5';
+import { MdOutlineQrCode } from 'react-icons/md';
+import Navbar from '../home/navbar';
+import { buscarEventosUsuario } from '../services/buscarEventosUsuario';
+import { getUserProfile } from '../services/userDataService';
+import Rodape from '../rodape/rodape';
+import QrCodeComponent from '../ticket/qrCodeComponent';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -44,19 +43,21 @@ import {
   Title,
   CreateLink,
   CenterContainer,
-} from "./userHomeStyles";
-import { Profile } from "./profile";
+  AdminIcon,
+  ObserverIcon
+} from './userHomeStyles';
+import { Profile } from './profile';
 
 // Função para formatar a data
 const formatDate = (dateString) => {
   const date = parseISO(dateString);
-  return format(date, "EEE, dd MMM - HH'h'", { locale: ptBR }).toUpperCase();
+  return format(date, 'EEE, dd MMM - HH\'h\'', { locale: ptBR }).toUpperCase();
 };
 
 export default function UserHome() {
   const token = document.cookie.replace(
     /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-    "$1",
+    '$1',
   );
 
   const [events, setEvents] = useState([]);
@@ -83,6 +84,22 @@ export default function UserHome() {
     return event.tickets.length;
   };
 
+  // Função para definir o ícone e texto com base no papel do usuário
+  const getRoleIconAndText = (role) => {
+    switch (role) {
+      case 'admin':
+        return { icon: <IoMdStar size="23px" color="#d75d36" />, text: 'Administrador' };
+      case 'observer':
+        return { icon: <IoEyeOutline size="23px" color="#9cafb5" />, text: 'Observador' };
+      case 'checkin':
+        return { icon: <MdOutlineQrCode size="23px" color="#9cafb5" />, text: 'Check-in' };
+      case 'seller':
+        return { icon: <GiTicket size="23px" color="#9cafb5" />, text: 'Vendedor' };
+      default:
+        return { icon: null, text: 'Sem Permissão' };
+    }
+  };
+
   return (
     <Section>
       <Navbar />
@@ -91,7 +108,7 @@ export default function UserHome() {
         <AllContainer>
           <Container>
             <Text>
-              O Seu perfil ainda está incompleto. Preencha os dados de{" "}
+              O Seu perfil ainda está incompleto. Preencha os dados de{' '}
               <strong>Endereço.</strong>
             </Text>
             <EditProfileBtn to="/editprofile">Concluir cadastro</EditProfileBtn>
@@ -107,11 +124,11 @@ export default function UserHome() {
                 <CreateLink>
                   <MdAdd
                     style={{
-                      height: "30px",
-                      width: "30px",
-                      color: "#ef4118",
+                      height: '30px',
+                      width: '30px',
+                      color: '#ef4118',
                     }}
-                  ></MdAdd>
+                  />
                 </CreateLink>
               </Link>
               {userData &&
@@ -120,7 +137,7 @@ export default function UserHome() {
                   <ComercialProfiles key={index}>
                     <Link
                       to={`/profile/${profile._id}`}
-                      style={{ textDecoration: "none" }}
+                      style={{ textDecoration: 'none' }}
                     >
                       <Img
                         src={
@@ -130,8 +147,8 @@ export default function UserHome() {
                         }
                         style={{
                           backgroundColor: profile.profilePhoto
-                            ? "transparent"
-                            : "#f3f8fc",
+                            ? 'transparent'
+                            : '#f3f8fc',
                         }}
                       />
                     </Link>
@@ -141,19 +158,19 @@ export default function UserHome() {
           </ComercialContainer>
           <Title>Meus ingressos</Title>
           <TicketContainer>
-            <QrCodeComponent></QrCodeComponent>
+            <QrCodeComponent />
           </TicketContainer>
 
           <Title>Próximos eventos</Title>
           
           <EventSection>
             <EventContainer>
-              {events.map((event, index) => (
+              {events.map((event) => (
                 <div key={event._id}>
                   <EventWrapper>
                     <Banner
                       src={`https://fauvesapi.thiagosouzadev.com/api/users/${event.capaEvento}`}
-                    ></Banner>
+                    />
                     <Txt>
                       <PubAndDelContainer>
                         <Public>Publicado</Public>
@@ -162,7 +179,7 @@ export default function UserHome() {
 
                       <Link
                         to={`/eventedit/${event._id}`}
-                        style={{ textDecoration: "none", color: "inherit" }}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
                       >
                         <TxtContainer>
                           <Name>{event.nomeEvento}</Name>
@@ -173,21 +190,16 @@ export default function UserHome() {
                       <QntAndPermission>
                         <QntTicket>
                           <GiTicket
-                            style={{ marginRight: "7px" }}
+                            style={{ marginRight: '7px' }}
                             size="23px"
                             color="#d75d36"
                           />
-                          {calcularQntIngressos(event)} ingressos{" "}
+                          {calcularQntIngressos(event)} ingressos
                         </QntTicket>
                         <Permission>
-                          {" "}
-                          <IoMdStar
-                            style={{ marginRight: "7px" }}
-                            size="23px"
-                            color="#d75d36"
-                          />
-                          <span style={{ verticalAlign: "middle" }}>
-                            Administrador
+                          {getRoleIconAndText(event.role).icon}
+                          <span style={{ verticalAlign: 'middle' }}>
+                            {getRoleIconAndText(event.role).text}
                           </span>
                         </Permission>
                       </QntAndPermission>

@@ -83,6 +83,7 @@ display: flex;
 flex-wrap: wrap;
 width: 100%;
 height: auto;
+gap: 0.7em;
 
 `
 

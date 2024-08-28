@@ -294,6 +294,7 @@ export const Permission = styled.p`
   font-size: 15px;
   display: flex;
   align-items: center;
+  gap: 0.3em;
 `;
 export const Delete = styled.p`
   font-family: "Montserrat", sans-serif;
