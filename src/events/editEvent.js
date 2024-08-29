@@ -8,8 +8,18 @@ import TicketComponent from "../ticket/ticketComponent";
 import { getEventById } from "../services/getEventsById";
 import { deleteEvent } from "../services/deleteEvents";
 import { format, parseISO } from 'date-fns';
+import { getUserDataById } from "../services/getUserDataById";
+import  LocationLogo  from '../assets/icons/location2.svg'
+import EditDescriptionModal from "./editDescriptionModal";
 import { ptBR } from 'date-fns/locale';
 import {
+  EventProductor, 
+  UserIcon,
+  UserName,
+  TitleText,
+  LocationContainer,
+  LocationImage,
+  LocationText,
   ImageContainer,
   Section,
   SubContainer,
@@ -31,6 +41,10 @@ import {
   CreateTicketText,
   DeleteAndEdit,
   Edit,
+  DescriptionContainer,
+  EditAndTitle,
+  EditDescription,
+  
 } from "./editEventStyles";
 import { AiOutlineTeam } from "react-icons/ai";
 import { TbTransactionDollar, TbReportSearch, TbPigMoney, TbFilterDiscount } from "react-icons/tb";
@@ -49,9 +63,14 @@ export default function EditEvent() {
   const { eventId } = useParams();
   const [eventData, setEventData] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditDescriptionlOpen, setIsEditDescriptionOpen] = useState(false);
+
   const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const location = useLocation();
+  const [userData, setUserData] = useState(null);
+  const [profileId, setProfileId] = useState(null);
+
   const token = document.cookie.replace(
     /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
     "$1"
@@ -62,6 +81,11 @@ export default function EditEvent() {
       try {
         const event = await getEventById(eventId);
         setEventData(event);
+        if (event.producaoEvento) {
+          const userProfileData = await getUserDataById(event.producaoEvento);
+          setUserData(userProfileData);
+          setProfileId(event.producaoEvento);
+        }
       } catch (error) {
         console.error("Erro ao buscar os dados do evento:", error);
       }
@@ -97,9 +121,20 @@ export default function EditEvent() {
     setSelectedEvent(null);
   };
 
+  const openEditDescription = () => {
+    setIsEditDescriptionOpen(true);
+  };
+
+  const closeEditDescription = () => {
+    setIsEditDescriptionOpen(false)
+    setSelectedEvent(null);
+  };
+
   return (
     <>
       <Navbar />
+      
+
       <Section>
         {eventData && (
           <ImageContainer
@@ -198,8 +233,18 @@ export default function EditEvent() {
               <FaGreaterThan style={{ marginRight: '1em', marginLeft: 'auto' }} size="19px" color="#7b919f" />
             </Options>
           </OptionsContainer>
-        </Wrapper>
         <TicketComponent />
+        <EditAndTitle><TitleText>Descrição</TitleText><EditDescription onClick={openEditDescription}>Editar descrição</EditDescription>
+</EditAndTitle>
+{eventData && (
+  <DescriptionContainer>
+    <p style={{marginLeft: '0.5em'}}>
+    {eventData.description}
+
+    </p>
+  </DescriptionContainer>
+)}
+        
         <Span></Span>
         <CreateTicketContainer to={`/selecttickettype/${eventId}`}>
           <CreateTicketText>
@@ -207,6 +252,48 @@ export default function EditEvent() {
             Criar ingresso
           </CreateTicketText>
         </CreateTicketContainer>
+        <TitleText>Local</TitleText>
+
+        {(eventData && 
+
+        <LocationContainer>
+              <LocationImage src={LocationLogo} />
+              <LocationText>{eventData.localDoEvento}</LocationText>
+        
+        </LocationContainer>
+
+        
+                      )}
+<TitleText>Produtor</TitleText>
+{userData && profileId && (
+          <EventProductor>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Link
+                style={{ textDecoration: "none" }}
+                to={`/profile/${profileId}`}
+              >
+                <UserIcon
+                  src={`https://fauvesapi.thiagosouzadev.com/api/users/${userData.profilePhoto}`}
+                />
+              </Link>
+              <Link
+                style={{ textDecoration: "none" }}
+                to={`/profile/${profileId}`}
+              >
+                <UserName>{userData.nomeEmpresa}</UserName>
+              </Link>
+            </div>
+            <Link
+              style={{ textDecoration: "none" }}
+              to={`/profile/${profileId}`}
+            >
+              <FaGreaterThan style={{ marginRight: '2em' }} size='20px' color='#4b4b4b' />
+            </Link>
+          </EventProductor>
+        )}
+                        </Wrapper>
+
+
         <Rodape />
       </Section>
       {isEditModalOpen && (
@@ -218,6 +305,13 @@ export default function EditEvent() {
       )}
       {isEditTicketModalOpen && (
         <EmitirCortesia
+          event={eventData}
+          onClose={closeEditTicketModal}
+          token={token}
+        />
+      )}
+       {isEditDescriptionlOpen && (
+        <EditDescriptionModal
           event={eventData}
           onClose={closeEditTicketModal}
           token={token}

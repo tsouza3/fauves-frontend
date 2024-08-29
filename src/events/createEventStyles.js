@@ -50,7 +50,7 @@ export const Span = styled.span`
 export const Input = styled(ReactInputMask)`
   box-sizing: border-box;
   width: ${(props) => props.width || "700px"};
-  height: 50px;
+  height: ${(props) => props.height || "50px"};
 
   text-indent: 20px;
 

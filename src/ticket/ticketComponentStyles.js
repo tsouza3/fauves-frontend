@@ -12,7 +12,7 @@ export const Container = styled.div`
 
 export const Wrapper = styled.div`
   background-color: #fff;
-  width: 43%;
+  width: 100%;
   height: 130px;
   border-radius: 10px;
   display: flex;

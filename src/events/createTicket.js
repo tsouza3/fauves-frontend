@@ -223,7 +223,7 @@ export default function CreateTicket() {
             <InputWrapper>
               <Label>Descrição</Label>
               <Span></Span>
-              <Input height={"150px"} type="text" name="descricao" />
+              <Input as='textarea' style={{resize: 'none'}} height={"150px"} type="text" name="descricao" />
             </InputWrapper>
             <Span></Span>
             <Span></Span>

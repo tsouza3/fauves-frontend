@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Navbar from '../home/navbar';
 import Rodape from "../rodape/rodape";
 import { getEventById } from "../services/getEventsById";
-import axios from "axios";
+import { consultarTransacoes } from "../services/transactions";
 
 import { 
   Section, 
@@ -26,48 +26,31 @@ export default function Relatorios() {
   const { eventId } = useParams(); 
   const [nomeEvento, setNomeEvento] = useState("");
   const [tickets, setTickets] = useState([]);
-
-  const token = document.cookie.replace(
-    /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-    "$1"
-  );
+  const [totalPixReceita, setTotalPixReceita] = useState(0); // Estado para armazenar a receita total de Pix
 
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const eventData = await getEventById(eventId, token);
+        const eventData = await getEventById(eventId);
         setNomeEvento(eventData.nomeEvento);
         setTickets(eventData.tickets);
 
-        // Iterar sobre os tickets para buscar os dados de cobrança usando txid
-        eventData.tickets.forEach(ticket => {
-          ticket.txid.forEach(async (txid) => {
-            try {
-              const cobrancaData = await getCobrancaByTxid(txid, token);
-              console.log(cobrancaData);  // Aqui você pode armazenar ou processar os dados da cobrança como necessário
-            } catch (error) {
-              console.error(`Erro ao buscar dados da cobrança para txid ${txid}:`, error);
-            }
-          });
-        });
+        // Consultar as transações pagas associadas ao eventId
+        const cobrancasPagas = await consultarTransacoes(eventId);
+        
+        // Calcular a receita total de Pix
+        const totalReceita = cobrancasPagas.reduce((acc, transacao) => {
+          return acc + parseFloat(transacao.valor.original);
+        }, 0);
+
+        setTotalPixReceita(totalReceita.toFixed(2)); // Armazenar a receita total, formatada com 2 casas decimais
       } catch (error) {
-        console.error("Erro ao buscar o evento:", error);
+        console.error("Erro ao buscar o evento ou as transações:", error);
       }
     };
 
     fetchEventData();
-  }, [eventId, token]);
-
-  const getCobrancaByTxid = async (txid, token) => {
-    const apiUrl = `https://pix.api.efipay.com.br/v2/cob/${txid}`;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const response = await axios.get(apiUrl, config);
-    return response.data;
-  };
+  }, [eventId]);
 
   return (
     <Section>
@@ -84,6 +67,8 @@ export default function Relatorios() {
               <FirstItem>Tipo</FirstItem>
               <ItensContainer>
                 <Item>Qtd.</Item>
+              </ItensContainer>
+              <ItensContainer>
                 <Item>Receita</Item>
               </ItensContainer>
             </DataWrapper>
@@ -101,7 +86,10 @@ export default function Relatorios() {
               </Data>
               <ItensContainer>
                 <Item>Qtd.</Item>
+              </ItensContainer>
+              <ItensContainer>
                 <Item>Receita</Item>
+                <Item>R$ {totalPixReceita}</Item>
               </ItensContainer>
             </DataWrapper>
           </DataContainer>
@@ -120,6 +108,8 @@ export default function Relatorios() {
               </Data>
               <ItensContainer>
                 <Item>Qtd.</Item>
+              </ItensContainer>
+              <ItensContainer>
                 <Item>Receita</Item>
               </ItensContainer>
             </DataWrapper>

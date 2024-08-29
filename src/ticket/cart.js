@@ -36,11 +36,10 @@ const Cart = () => {
 
         const initialQuantities = {};
         eventData.tickets.forEach((ticket) => {
-          initialQuantities[ticket._id] = 1;
+          initialQuantities[ticket._id] = 0;
         });
         setTicketQuantities(initialQuantities);
 
-        // Definindo o ticketId do primeiro ingresso como padrão
         if (eventData.tickets.length > 0) {
           setTicketId(eventData.tickets[0]._id);
         }
@@ -57,7 +56,7 @@ const Cart = () => {
       ...prevQuantities,
       [ticketId]: prevQuantities[ticketId] + 1,
     }));
-    setTicketId(ticketId); // Atualizando o ticketId com o ingresso adicionado
+    setTicketId(ticketId);
   };
 
   const handleRemoveTicket = (ticketId) => {
@@ -78,7 +77,6 @@ const Cart = () => {
     const totalPrice = calculateTotalPrice().toFixed(2);
     const totalTickets = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
 
-    // Verificar se todos os dados necessários estão presentes
     if (!eventId || totalTickets <= 0 || totalPrice <= 0) {
       return;
     }
@@ -100,6 +98,8 @@ const Cart = () => {
   if (error) {
     return <div>{error}</div>;
   }
+
+  const totalTickets = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
 
   return (
     <Container>
@@ -137,15 +137,17 @@ const Cart = () => {
           </EditAndDelContainer>
         </Wrapper>
       ))}
-      <CartToCheckout>
-        <ItensContainer>
-          <QntTicket>
-            {Object.values(ticketQuantities).reduce((a, b) => a + b, 0)} ingresso(s) por
-            <PriceText>R$ {calculateTotalPrice().toFixed(2)}</PriceText>
-          </QntTicket>
-          <PurchaseButton onClick={handleCheckout}>Comprar</PurchaseButton>
-        </ItensContainer>
-      </CartToCheckout>
+      {totalTickets > 0 && (
+        <CartToCheckout>
+          <ItensContainer>
+            <QntTicket>
+              {totalTickets} ingresso(s) por
+              <PriceText>R$ {calculateTotalPrice().toFixed(2)}</PriceText>
+            </QntTicket>
+            <PurchaseButton onClick={handleCheckout}>Comprar</PurchaseButton>
+          </ItensContainer>
+        </CartToCheckout>
+      )}
     </Container>
   );
 };

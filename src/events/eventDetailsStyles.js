@@ -78,6 +78,36 @@ export const LocationContainer = styled.div`
   margin-bottom: 1em;
 `;
 
+export const EventDescription = styled.div`
+width: 40%;
+height: auto;
+border-radius: 10px;
+display: flex;
+margin-bottom: 1em;
+background-color: #fff;
+
+flex-direction: column;
+
+`
+
+export const DescriptionTitle = styled.p`
+font-family: "Montserrat", sans-serif;
+font-weight: 700;
+font-size: 15px;
+margin-top: 1em;
+margin-left: 1em;
+color: #4b4b4b;
+
+
+
+`
+export const DescriptionContent = styled.p`
+color: #4b4b4b;
+font-family: "Montserrat", sans-serif;
+font-weight: 500;
+font-size: 15px;
+margin-left: 1em;
+`
 export const LocationText = styled.p`
   color: #4b4b4b;
   font-family: "Montserrat", sans-serif;

@@ -75,8 +75,10 @@ jusitify-content: start;
 export const ItensContainer = styled.div`
 display: flex;
 gap: 2.5em;
-justify-content: end;
+align-items: end;
+justify-content: start;
 width: 100%;
+flex-direction: column;
 
 `
 

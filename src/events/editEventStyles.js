@@ -11,6 +11,76 @@ export const Section = styled.section`
   align-items: center;
 `;
 
+export const EventProductor = styled.div`
+  background-color: #fff;
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  margin-bottom: 10em;
+  justify-content: space-between
+  
+`;
+
+export const DescriptionContainer = styled.div`
+  background-color: #fff;
+  width: 100%;
+  height: auto;
+  min-height: 50px;
+  display: flex;
+  border-radius: 10px;
+  
+  
+`;
+
+export const EditDescription = styled.p`
+text-decoration: none;
+border: none;
+color: #ef4118;
+font-family: "Montserrat", sans-serif;
+font-weight: 600;
+font-size: 15px;
+cursor: pointer;
+
+`
+
+
+
+export const EditAndTitle = styled.div`
+display: flex;
+width: 100%;
+align-items: center;
+justify-content: space-between;
+
+`
+
+export const UserIcon = styled.img`
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-left: 1.5em;
+  border: 1px solid #ccc;
+`;
+
+export const UserName = styled.p`
+  color: #4b4b4b;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  margin-left: 1em;
+`;
+export const LocationContainer = styled.div`
+  background-color: #fff;
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+
+  
+`;
+
 export const ImageContainer = styled.img`
   height: 350px;
   width: 700px;
@@ -95,7 +165,7 @@ display: flex;
 flex-direction: row;
 gap: 1.2em;
 justify-content: center;
-margin-top: 2em;e
+margin-top: 2em;
 
 `;
 export const Txt = styled.p`
@@ -162,9 +232,25 @@ export const Span = styled.span`
   margin-top: 2em;
 `;
 
+export const LocationText = styled.p`
+  color: #4b4b4b;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  margin-left: 1em;
+ 
+`;
+
+export const LocationImage = styled.img`
+  width: 34px;
+  height: 45px;
+  margin-left: 1.5em;
+`;
+
+
 export const CreateTicketContainer = styled(Link)`
   background-color: transparent;
-  width: 43%;
+  width: 100%;
   height: 100px;
   border: 2px dashed #ccc;
   border-radius: 10px;
@@ -179,6 +265,16 @@ export const CreateTicketContainer = styled(Link)`
     transform: scale(1.02);
   }
 `;
+
+export const TitleText = styled.p`
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  align-self: start;
+  color: #4b4b4b;
+`;
+
+
 export const CreateTicketText = styled.div`
   font-family: "Montserrat", sans-serif;
   font-weight: 700;

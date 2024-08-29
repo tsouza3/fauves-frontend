@@ -1,3 +1,5 @@
+import { SuccessAlert } from './success';
+import { ErrorAlert } from './error';
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { updateEvent } from "../services/updateEvent";
@@ -13,12 +15,11 @@ import {
   Input,
   Label,
   SubmitButton,
-  Message,
 } from "./updateEventStyles";
 import Loader from "../Loader/loader";
 
 export default function EventEdit({ onClose }) {
-  const { eventId } = useParams(); 
+  const { eventId } = useParams();
 
   const token = document.cookie.replace(
     /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
@@ -46,26 +47,30 @@ export default function EventEdit({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage(null); // Limpa mensagem anterior
+    setError(null);   // Limpa erro anterior
 
-    const formData = new FormData(e.target);
-    const eventData = {
-      nomeEvento: formData.get("nomeEvento"),
-      dataInicio: formData.get("dataInicio"),
-      dataTermino: formData.get("dataTermino"),
-      localDoEvento: formData.get("localDoEvento"),
-      capaEvento: formData.get("capaEvento"),
-    };
+    const formData = new URLSearchParams();
+
+    formData.append("nomeEvento", e.target.nomeEvento.value);
+    formData.append("dataInicio", e.target.dataInicio.value);
+    formData.append("dataTermino", e.target.dataTermino.value);
+    formData.append("localDoEvento", e.target.localDoEvento.value);
+
+    console.log("Dados enviados:", {
+      nomeEvento: e.target.nomeEvento.value,
+      dataInicio: e.target.dataInicio.value,
+      dataTermino: e.target.dataTermino.value,
+      localDoEvento: e.target.localDoEvento.value,
+    });
 
     try {
-      await updateEvent(eventId, eventData, token);
+      await updateEvent(eventId, formData, token);
       setMessage({ type: "success", text: "Evento atualizado com sucesso!" });
       const updatedEventData = await getEventById(eventId);
       setEvent(updatedEventData);
     } catch (error) {
-      setMessage({
-        type: "error",
-        text: error.message || "Erro ao atualizar o evento.",
-      });
+      setError(error.message || "Erro ao atualizar o evento.");
     } finally {
       setLoading(false);
     }
@@ -84,36 +89,32 @@ export default function EventEdit({ onClose }) {
           <Title>Editar evento</Title>
           <form onSubmit={handleSubmit}>
             <InputContainer>
-              <Label>Clique na imagem para enviar uma nova capa para seu evento</Label>
-              <Input name="capaEvento" type="file" height={'240px'} />
-            </InputContainer>
-            <InputContainer>
               <Label>Nome do evento</Label>
-              <Input name="nomeEvento"  />
+              <Input name="nomeEvento" defaultValue={event?.nomeEvento || ''} />
             </InputContainer>
             <InputContainer>
               <Label>Data de Início</Label>
-              <Input name="dataInicio" 
-              mask="**/**/**** às **:**"
-              placeholder="dd/mm/yyyy às hh:mm" />
+              <Input name="dataInicio" defaultValue={event?.dataInicio || ''} placeholder="dd/mm/yyyy às hh:mm" />
             </InputContainer>
             <InputContainer>
               <Label>Data de Término</Label>
-              <Input
-              mask="**/**/**** às **:**"
-              placeholder="dd/mm/yyyy às hh:mm"
-                name="dataTermino"
-              />
+              <Input name="dataTermino" defaultValue={event?.dataTermino || ''} placeholder="dd/mm/yyyy às hh:mm" />
             </InputContainer>
             <InputContainer>
               <Label>Local do Evento</Label>
-              <Input
-                name="localDoEvento"
-              />
+              <Input name="localDoEvento" defaultValue={event?.localDoEvento || ''} />
             </InputContainer>
+
             <SubmitButton type="submit" disabled={loading}>
               {loading ? <Loader /> : "Salvar alterações"}
             </SubmitButton>
+
+            {message && message.type === "success" && (
+              <SuccessAlert style={{ width: '92%', marginTop: '1em' }}>
+                {message.text}
+              </SuccessAlert>
+            )}
+            {error && <ErrorAlert>{error}</ErrorAlert>}
           </form>
         </Container>
       </ModalContent>

@@ -7,6 +7,7 @@ import { ptBR } from 'date-fns/locale';
 
 import Rodape from "../rodape/rodape";
 import { FaGreaterThan } from "react-icons/fa6";
+import { DescriptionContent, EventDescription } from "./eventDetailsStyles";
 
 import {
   Section,
@@ -23,7 +24,8 @@ import {
   UserIcon,
   UserName,
   CreatorText,
-  BlurredImage
+  BlurredImage,
+  DescriptionTitle
 } from "./eventDetailsStyles";
 import Navbar from "../home/navbar";
 import LocationLogo from "../assets/icons/location2.svg";
@@ -88,8 +90,13 @@ export default function EventDetails() {
             <SubText>{eventData.nomeEvento}</SubText>
           </TextWrapper>
         </EventInformation>
+
         <Cart />
         <span style={{ marginBottom: "1em" }}></span>
+        <EventDescription>
+          <DescriptionTitle>Detalhes do evento:</DescriptionTitle>
+          <DescriptionContent>{eventData.description}</DescriptionContent>
+        </EventDescription>
         <LocationContainer>
           <LocationImage src={LocationLogo} />
           <LocationText>{eventData.localDoEvento}</LocationText>

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchAddressByCep } from "../services/buscaCep";
 import { updateUser } from "../services/updateUser";
+import { getUserProfile } from "../services/userDataService";
 import {
   Section,
   Container,
@@ -18,10 +19,10 @@ import {
   PhotoContainer,
 } from "./editProfileStyles";
 import Navbar from "../home/navbar";
-import Rodape from '../rodape/rodape';
-import Loader from "../Loader/loader"; 
-import { ErrorAlert } from '../events/error';
-import { SuccessAlert } from '../events/success';
+import Rodape from "../rodape/rodape";
+import Loader from "../Loader/loader";
+import { ErrorAlert } from "../events/error";
+import { SuccessAlert } from "../events/success";
 
 export default function EditProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -41,6 +42,53 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      setLoading(true);
+      try {
+        const cookie = document.cookie;
+        console.log("Cookie:", cookie);
+        const token = cookie.replace(
+          /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
+        console.log("Token:", token);
+  
+        if (!token) {
+          setErrorMessage("Token não encontrado");
+          return;
+        }
+  
+        const userProfile = await getUserProfile(token);
+  
+        setFormData({
+          name: userProfile.name || "",
+          email: userProfile.email || "",
+          celular: userProfile.celular || "",
+          cep: userProfile.cep || "",
+          logradouro: userProfile.logradouro || "",
+          bairro: userProfile.bairro || "",
+          cidade: userProfile.cidade || "",
+          uf: userProfile.uf || "",
+          numero: userProfile.numero || "",
+          cpf: userProfile.cpf || "",
+          dataNascimento: userProfile.dataNascimento || "",
+        });
+  
+        if (userProfile.profilePhoto) {
+          setPhotoPreview(userProfile.profilePhoto);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar perfil do usuário:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    loadUserProfile();
+  }, []);
+  
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -88,7 +136,10 @@ export default function EditProfile() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const token = getCookie("token");
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
 
       if (!token) {
         setErrorMessage("Token não encontrado");
@@ -100,17 +151,12 @@ export default function EditProfile() {
       setSuccessMessage("Perfil atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
-      setErrorMessage("Erro ao atualizar perfil, verifique os dados e tente novamente");
+      setErrorMessage(
+        "Erro ao atualizar perfil, verifique os dados e tente novamente"
+      );
     } finally {
       setLoading(false);
     }
-  };
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
   };
 
   return (
@@ -267,8 +313,16 @@ export default function EditProfile() {
           <SubmitButton onClick={handleSubmit}>
             {loading ? <Loader /> : "Salvar alterações"}
           </SubmitButton>
-          {successMessage && <div style={{marginTop: '1em', width: '100%' }}><SuccessAlert message={successMessage} /></div>}
-          {errorMessage && <div style={{marginTop: '1em', width: '100%'  }}><ErrorAlert error={errorMessage} /></div>}
+          {successMessage && (
+            <div style={{ marginTop: "1em", width: "100%" }}>
+              <SuccessAlert message={successMessage} />
+            </div>
+          )}
+          {errorMessage && (
+            <div style={{ marginTop: "1em", width: "100%" }}>
+              <ErrorAlert error={errorMessage} />
+            </div>
+          )}
         </FormWrapper>
       </Section>
       <Rodape />

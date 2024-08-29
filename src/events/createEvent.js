@@ -233,7 +233,7 @@ export function CreateEvent() {
           <SubmitButton type="submit">
             {loading ? <Loader /> : "Criar evento"}
           </SubmitButton>
-          {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar perfil comercial'}/></div>}
+          {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar evento!'}/></div>}
         </Form>
       </Container>
       <Rodape />

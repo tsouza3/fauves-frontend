@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { GiTicket } from "react-icons/gi";
 import { IoMdStar } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
 import { MdOutlineQrCode } from "react-icons/md";
 import { updateUserPermission } from '../services/permissionService';
+import { getEventById } from "../services/getEventsById";
 
 import { ErrorAlert } from '../events/error';
 import { SuccessAlert } from '../events/success';
@@ -41,6 +42,22 @@ export default function AddMemberTeam({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [eventData, setEventData] = useState(null);
+
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const event = await getEventById(eventId);
+        setEventData(event);
+
+      } catch (error) {
+        setError("Erro ao buscar o evento.");
+      }
+    };
+
+    fetchEventData();
+  }, [eventId]);
 
   const handleClose = () => {
     onClose(); 
@@ -70,8 +87,14 @@ export default function AddMemberTeam({ onClose }) {
     <ModalWrapper>
       <ModalContent>
         <Close size={"30px"} onClick={handleClose} />
+
         <Container>
-          <NameEvent>Teste</NameEvent>
+        {eventData ? (
+          <>                    <NameEvent>{eventData.nomeEvento}</NameEvent>
+          </>
+
+        ) : <p></p>}
+
           <Title>Adicionar pessoa à equipe</Title>
           <Wrapper>
             <SelectedPermissionContainer>
@@ -123,7 +146,6 @@ export default function AddMemberTeam({ onClose }) {
               {loading ? <Loader /> : "Adicionar"}
             </SubmitButton>
           </Wrapper>
-          {/* Renderizar Alert com base na mensagem e erro */}
           {error && <div style={{ width: '91%', alignSelf: 'center', marginBottom: '2em' }}><ErrorAlert error={error} /></div>}
           {message && <div style={{ width: '91%', alignSelf: 'center', marginBottom: '2em' }}><SuccessAlert message={message} /></div>}
         </Container>

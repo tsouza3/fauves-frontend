@@ -41,7 +41,7 @@ transition: transform 0.2s ease;
 
 
 `;
-
+ 
 export const NameEvent = styled.div`
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
