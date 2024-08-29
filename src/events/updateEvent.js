@@ -87,7 +87,6 @@ export default function EventEdit({ onClose }) {
         <Container>
           {event && <NameEvent>{event.nomeEvento}</NameEvent>}
           <Title>Editar evento</Title>
-          <form onSubmit={handleSubmit}>
             <InputContainer>
               <Label>Nome do evento</Label>
               <Input name="nomeEvento" defaultValue={event?.nomeEvento || ''} />
@@ -105,17 +104,18 @@ export default function EventEdit({ onClose }) {
               <Input name="localDoEvento" defaultValue={event?.localDoEvento || ''} />
             </InputContainer>
 
-            <SubmitButton type="submit" disabled={loading}>
+            <SubmitButton onClick={handleSubmit} type="submit" disabled={loading}>
               {loading ? <Loader /> : "Salvar alterações"}
             </SubmitButton>
 
             {message && message.type === "success" && (
-              <SuccessAlert style={{ width: '92%', marginTop: '1em' }}>
+              <div style={{ width: '92%', marginTop: '1em' }}><SuccessAlert >
                 {message.text}
               </SuccessAlert>
+              </div>
             )}
-            {error && <ErrorAlert>{error}</ErrorAlert>}
-          </form>
+            <div style={{ width: '92%', marginTop: '1em' }}>             {error && <ErrorAlert>{error}</ErrorAlert>}
+</div>
         </Container>
       </ModalContent>
     </ModalWrapper>

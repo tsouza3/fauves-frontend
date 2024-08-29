@@ -18,6 +18,8 @@ border-radius: 50%;
 width: 70px;
 height: 70px;
 border: 1px solid #ccc;
+margin: 0;
+margin-bottom: 0.5em;
 
 `
 
@@ -26,7 +28,7 @@ font-family: "Montserrat", sans-serif;
 font-weight: 700;
 color: #11455d;
 font-size: 20px;
-
+margin: 0;
 `
 
 export const UserEmail = styled.p`
@@ -34,7 +36,7 @@ font-family: "Montserrat", sans-serif;
 font-weight: 500;
 font-size: 14px;
 color: #ccc;
-
+margin: 0;
 
 `
 
@@ -44,6 +46,7 @@ height: 100%;
 display: flex;
 flex-direction: column;
 align-items: center;
+gap: 1em;
 justify-content: center;
 
 

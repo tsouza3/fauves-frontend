@@ -10,31 +10,15 @@ import axios from "axios";
 
 import {
   Section,
-  BlurContainer,
-  UserContainer,
-  EventImage,
-  UserText,
-  Date,
-  Name,
-  FormContainer,
-  FormWrapper,
-  Title,
-  EventOwner,
-  UserIcon,
-  UserName,
-  InputWrapper,
-  InputContainer,
-  Label,
-  Input,
-  OptionsContainer,
-  Option,
-  OptionText,
-  PixWrapper,
-  QrcodeWrapper,
-  PixText,
-  BlurredImage,
-  SubmitButton
+  Container, 
+  EventContainer,
+  ImageContainer,
+  EventTextContainer,
+  EventText,
+  NameEvent
+ 
 } from "./checkoutStyles";
+import Navbar from '../home/navbar'
 import { SuccessAlert } from '../events/success'
 
 const Checkout = () => {
@@ -166,106 +150,29 @@ const Checkout = () => {
 
   return (
     <Section>
-      <BlurContainer>
-        <BlurredImage src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`} />
-        <UserContainer>
-          {eventData && (
-            <>
-              <EventImage src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`} />
-              <UserText>
-                <Date>{eventData.dataInicio}</Date>
-                <Name>{eventData.nomeEvento}</Name>
-              </UserText>
-            </>
-          )}
-        </UserContainer>
-      </BlurContainer>
+      <Navbar />
+      <Container>
+        <EventContainer>
+          <ImageContainer>
+          <img style={{objectFit: 'cover', alignSelf: 'center', width: '100%', height: '90%', borderRadius: '8px', marginLeft: '0.7em'}} src={`https://fauvesapi.thiagosouzadev.com/api/users/${eventData.capaEvento}`}
+></img>
+          </ImageContainer>
+          <EventTextContainer>
 
-      <FormContainer>
-        <FormWrapper>
-          {paymentMethod === "creditCard" && (
-            <>
-              <Title>DADOS DO COMPRADOR</Title>
-              <EventOwner>
-                <UserIcon />
-                <UserName>{name}</UserName>
-              </EventOwner>
-              <InputWrapper>
-                <InputContainer>
-                  <Label>CPF</Label>
-                  <Input mask="999.999.999-99" type="text" placeholder="000.000.000-00" width="100%" />
-                </InputContainer>
-                <InputContainer>
-                  <Label>Data de nasc.</Label>
-                  <Input mask="99/99/9999" type="text" placeholder="__/__/____" width="100%" />
-                </InputContainer>
-              </InputWrapper>
-              <Title>FORMA DE PAGAMENTO</Title>
-              <OptionsContainer>
-                <Option onClick={() => handlePaymentMethodChange("creditCard")} selected={paymentMethod === "creditCard"} width={"30%"} minWidth={"60%;"}>
-                  <FaRegCreditCard size="20px" color="#4b4b4b" />
-                  <OptionText>CARTÃO DE CRÉDITO</OptionText>
-                </Option>
-                <Option onClick={() => handlePaymentMethodChange("pix")} selected={paymentMethod === "pix"} width={"15%"} minWidth={"30%;"}>
-                  <SiPix size="20px" color="#4b4b4b" />
-                  <OptionText>PIX</OptionText>
-                </Option>
-              </OptionsContainer>
-              <Title>DADOS DO CARTÃO</Title>
-              <InputWrapper>
-                <InputContainer>
-                  <Label>Número do cartão</Label>
-                  <Input mask="**** **** **** ****" width={"100%"} placeholder="8546 5846 5848 8484" />
-                </InputContainer>
-                <InputContainer>
-                  <Label>Validade</Label>
-                  <Input mask="**/**" width={"100%"} placeholder="10/30" />
-                </InputContainer>
-                <InputContainer>
-                  <Label>CVV</Label>
-                  <Input mask="***" width={"100%"} placeholder="999" />
-                </InputContainer>
-              </InputWrapper>
-              <InputContainer>
-                <Label>Nome impresso no cartão</Label>
-                <Input width={"100%"} />
-              </InputContainer>
-              <InputContainer>
-                <Label>Parcelamento</Label>
-                <Input width={"100%"} backgroundColor={"#f7f7f7"} readOnly value="Parcelamento não disponível" />
-              </InputContainer>
-            </>
+          <EventText>Você está comprando</EventText>
+          {eventData && (
+
+<NameEvent>{eventData.nomeEvento}</NameEvent>
+
           )}
-          {paymentMethod === "pix" && (
-            <>
-              <Title>P</Title>
-              <OptionsContainer>
-                <Option onClick={() => handlePaymentMethodChange("creditCard")} selected={paymentMethod === "creditCard"} width={"30%"} minWidth={"60%;"}>
-                  <FaRegCreditCard size="20px" color="#4b4b4b" />
-                  <OptionText>CARTÃO DE CRÉDITO</OptionText>
-                </Option>
-                <Option onClick={() => handlePaymentMethodChange("pix")} selected={paymentMethod === "pix"} width={"15%"} minWidth={"30%;"}>
-                  <SiPix size="20px" color="#4b4b4b" />
-                  <OptionText>PIX</OptionText>
-                </Option>
-              </OptionsContainer>
-              <PixWrapper>
-                <QrcodeWrapper>
-                  <QRCode value={qrCode} size={256} includeMargin={true} />
-                </QrcodeWrapper>
-                <PixText>
-                  Aguardando pagamento do PIX. <br />
-                  Digitalize o QR Code ou copie o código.
-                </PixText>
-                {showSuccessAlert && (
-                  <div style={{width: '50%', marginTop: '1em', alignSelf: 'center'}}><SuccessAlert message="Código PIX copiado com sucesso!" /> </div>// Exibe o alerta de sucesso
-                )}
-                <SubmitButton width={"50%"} onClick={copyToClipboard}>Copiar código PIX</SubmitButton>
-              </PixWrapper>
-            </>
-          )}
-        </FormWrapper>
-      </FormContainer>
+        
+          </EventTextContainer>
+          
+
+        </EventContainer>
+
+      </Container>
+
     </Section>
   );
 };
