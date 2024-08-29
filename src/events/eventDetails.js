@@ -95,7 +95,8 @@ export default function EventDetails() {
         <span style={{ marginBottom: "1em" }}></span>
         <EventDescription>
           <DescriptionTitle>Detalhes do evento:</DescriptionTitle>
-          <DescriptionContent>{eventData.description}</DescriptionContent>
+          <DescriptionContent><p style={{ wordBreak: 'break-word', overflowWrap: 'break-word', margin: '0' }}>{eventData.description}</p>
+</DescriptionContent>
         </EventDescription>
         <LocationContainer>
           <LocationImage src={LocationLogo} />

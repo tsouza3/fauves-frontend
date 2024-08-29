@@ -26,13 +26,21 @@ export const EventProductor = styled.div`
 export const DescriptionContainer = styled.div`
   background-color: #fff;
   width: 100%;
-  height: auto;
   min-height: 50px;
   display: flex;
+  flex-direction: column;
   border-radius: 10px;
-  
-  
+  box-sizing: border-box;
+  padding: 1em; /* Ajuste conforme necessário */
+  overflow: hidden;
+  word-break: break-word; /* Quebra palavras longas */
+  white-space: pre-wrap; /* Quebra linhas de acordo com o espaço disponível */
+  overflow-wrap: break-word; /* Quebra palavras longas */
+  font-family: "Montserrat", sans-serif;
+font-weight: 500;
+font-size: 15px;
 `;
+
 
 export const EditDescription = styled.p`
 text-decoration: none;

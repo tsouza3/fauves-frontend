@@ -106,7 +106,18 @@ color: #4b4b4b;
 font-family: "Montserrat", sans-serif;
 font-weight: 500;
 font-size: 15px;
-margin-left: 1em;
+background-color: #fff;
+width: 100%;
+min-height: 50px;
+display: flex;
+flex-direction: column;
+border-radius: 10px;
+box-sizing: border-box;
+padding: 1em; /* Ajuste conforme necessário */
+overflow: hidden;
+word-break: break-word; /* Quebra palavras longas */
+white-space: pre-wrap; /* Quebra linhas de acordo com o espaço disponível */
+overflow-wrap: break-word; /* Quebra palavras longas */
 `
 export const LocationText = styled.p`
   color: #4b4b4b;

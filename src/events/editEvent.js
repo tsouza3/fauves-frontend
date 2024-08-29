@@ -238,13 +238,10 @@ export default function EditEvent() {
 </EditAndTitle>
 {eventData && (
   <DescriptionContainer>
-    <p style={{marginLeft: '0.5em'}}>
-    {eventData.description}
-
-    </p>
-  </DescriptionContainer>
+<p style={{ wordBreak: 'break-word', overflowWrap: 'break-word', margin: '0' }}>
+  {eventData.description}
+</p>  </DescriptionContainer>
 )}
-        
         <Span></Span>
         <CreateTicketContainer to={`/selecttickettype/${eventId}`}>
           <CreateTicketText>
