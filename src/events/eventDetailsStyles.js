@@ -107,6 +107,7 @@ font-family: "Montserrat", sans-serif;
 font-weight: 500;
 font-size: 15px;
 background-color: #fff;
+
 width: 100%;
 min-height: 50px;
 display: flex;

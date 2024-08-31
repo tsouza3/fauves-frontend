@@ -136,7 +136,7 @@ export const ItensContainer = styled.div`
 
 export const PurchaseButton = styled.button`
   border-radius: 30px;
-  width: 200px;
+  width: 15%;
   height: 50px;
   color: #fff;
   background-color: #fa4a01;

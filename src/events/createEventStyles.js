@@ -76,6 +76,8 @@ export const Label = styled.label`
   color: #11455d;
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
+  margin-bottom: 10px;
+
 `;
 
 export const SubmitButton = styled.button`

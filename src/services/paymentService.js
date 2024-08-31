@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-export const getPix = async ({ price, eventId, userId, quantidadeTickets, ticketId }) => {
+export const getPix = async ({ price, eventId, userId, quantidadeTickets, ticketId, devedorCpf, devedorCnpj, devedorNome }) => {
   try {
     const response = await axios.post('https://fauvesapi.thiagosouzadev.com/pix', {
       price,
       eventId,
       userId,
       quantidadeTickets,
-      ticketId
+      ticketId,
+      devedorCpf, 
+      devedorCnpj, 
+      devedorNome
     });
     return response.data;
   } catch (error) {
