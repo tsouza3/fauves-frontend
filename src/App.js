@@ -88,6 +88,7 @@ function App() {
         <Route path="/financial/eventId" element={<Financeiro />} />
 
 
+
         
       </Routes>
     </Router>

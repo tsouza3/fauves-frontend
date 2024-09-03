@@ -53,6 +53,10 @@ import { BiSolidDiscount } from "react-icons/bi";
 import { RiTeamLine } from "react-icons/ri";
 import { FaGreaterThan } from "react-icons/fa";
 
+import Checkin from '../ticket/checkin'
+
+
+
 // Função para formatar a data
 const formatDate = (dateString) => {
   const date = parseISO(dateString);
@@ -64,6 +68,7 @@ export default function EditEvent() {
   const [eventData, setEventData] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditDescriptionlOpen, setIsEditDescriptionOpen] = useState(false);
+  const [isOpenCheckinModal, setIsOpenCheckinModal] = useState(false);
 
   const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -130,6 +135,10 @@ export default function EditEvent() {
     setSelectedEvent(null);
   };
 
+  const openCheckinModal = () => {
+    setIsOpenCheckinModal(true);
+  };
+
   return (
     <>
       <Navbar />
@@ -159,7 +168,7 @@ export default function EditEvent() {
           )}
         </SubContainer>
         <Container>
-          <TicketValidation>
+          <TicketValidation onClick={openCheckinModal}>
             <Txt>Check-in</Txt>
             <SubTxt>
               Acesse o leitor de QR Code para validar os ingressos.
@@ -311,6 +320,12 @@ export default function EditEvent() {
         <EditDescriptionModal
           event={eventData}
           onClose={closeEditTicketModal}
+          token={token}
+        />
+      )}
+       {isOpenCheckinModal && (
+        <Checkin
+          event={eventData}
           token={token}
         />
       )}
