@@ -43,12 +43,9 @@ const TopDiv = styled.div`
   font-weight: 600;
   font-size: 17px;
   color: #4b4b4b;
-  padding: 0;
-  margin: 0;
-  gap: 5.5em;
 `;
 
-export const SelectInterface = styled.div`
+const SelectInterface = styled.div`
   width: 100%;
   display: flex;
   justify-content: start;
@@ -108,50 +105,21 @@ const PlaceholderDiv = styled.div`
   font-weight: bold;
 `;
 
-const Canvas = styled.canvas`
-  display: none;
-`;
-
 export default function Checkin() {
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
-  const [validationSuccess, setValidationSuccess] = useState(false);
-  const [qrData, setQrData] = useState('');
-
+  const [qrData, setQrData] = useState(null);
+  
   useEffect(() => {
     if (selectedOption === 'QRCode') {
       const getCameraStream = async () => {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { exact: 'environment' } } // Define a câmera traseira como padrão
+            video: { facingMode: { exact: "environment" } }
           });
-
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
-
-          const analyzeQRCode = () => {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-
-            if (canvas && video) {
-              const ctx = canvas.getContext('2d');
-
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-              const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-              if (code) {
-                setQrData(code.data);
-                setValidationSuccess(true);
-              } else {
-                requestAnimationFrame(analyzeQRCode);
-              }
-            }
-          };
-
-          requestAnimationFrame(analyzeQRCode);
         } catch (error) {
           console.error('Erro ao acessar a câmera:', error);
         }
@@ -161,37 +129,64 @@ export default function Checkin() {
     }
   }, [selectedOption]);
 
+  useEffect(() => {
+    if (selectedOption === 'QRCode' && videoRef.current) {
+      const video = videoRef.current;
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      
+      const analyzeQRCode = () => {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          
+          if (code) {
+            console.log('QR Code Data:', code.data);
+            setQrData(code.data);
+          }
+        }
+        requestAnimationFrame(analyzeQRCode);
+      };
+
+      analyzeQRCode();
+    }
+  }, [selectedOption, videoRef]);
+
   return (
     <ModalOverlay>
       <ModalContainer>
-        <TopDiv>
-          <FaLessThan style={{ cursor: 'pointer' }} />
-          <p>Participantes</p>
-          <SlOptionsVertical style={{ cursor: 'pointer' }} />
-        </TopDiv>
-        <SelectInterface>
-          <Option style={{ marginLeft: '1em' }} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>
-            Lista
-          </Option>
-          <Option selected={selectedOption === 'QRCode'} onClick={() => setSelectedOption('QRCode')}>
-            QR Code
-          </Option>
-        </SelectInterface>
-        <CameraDiv>
-          {validationSuccess ? (
-            <SuccessValidation qrData={qrData} />
-          ) : selectedOption === 'QRCode' ? (
-            <>
-              <Video ref={videoRef} autoPlay />
-              <Canvas ref={canvasRef} width={640} height={480} />
-            </>
-          ) : (
-            <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
-          )}
-        </CameraDiv>
-        <BottomDiv>
-          Digitalize o QR Code para fazer o check-in.
-        </BottomDiv>
+        {qrData ? (
+          <SuccessValidation qrData={qrData} />
+        ) : (
+          <>
+            <TopDiv>
+              <FaLessThan style={{ cursor: 'pointer' }} />
+              <p>Participantes</p>
+              <SlOptionsVertical style={{ cursor: 'pointer' }} />
+            </TopDiv>
+            <SelectInterface>
+              <Option style={{ marginLeft: '1em' }} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>
+                Lista
+              </Option>
+              <Option selected={selectedOption === 'QRCode'} onClick={() => setSelectedOption('QRCode')}>
+                QR Code
+              </Option>
+            </SelectInterface>
+            <CameraDiv>
+              {selectedOption === 'QRCode' ? (
+                <Video ref={videoRef} autoPlay />
+              ) : (
+                <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
+              )}
+            </CameraDiv>
+            <BottomDiv>
+              Digitalize o QR Code para fazer o check-in.
+            </BottomDiv>
+          </>
+        )}
       </ModalContainer>
     </ModalOverlay>
   );
