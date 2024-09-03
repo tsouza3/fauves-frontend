@@ -2,10 +2,9 @@ import styled from 'styled-components';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaLessThan } from 'react-icons/fa';
 import { SlOptionsVertical } from "react-icons/sl";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import SuccessValidation from './successValidation'; // Importe o componente
+import jsQR from 'jsqr';
+import SuccessValidation from './successValidation';
 
-// Estilo para o modal
 const ModalOverlay = styled.div`
   display: flex;
   align-items: center;
@@ -19,7 +18,6 @@ const ModalOverlay = styled.div`
   z-index: 1000;
 `;
 
-// Estilo do modal
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -92,6 +90,12 @@ const CameraDiv = styled.div`
   height: 100%;
 `;
 
+const Video = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 const PlaceholderDiv = styled.div`
   width: 100%;
   height: 100%;
@@ -105,42 +109,62 @@ const PlaceholderDiv = styled.div`
 `;
 
 export default function Checkin() {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [qrCodeData, setQrCodeData] = useState(null);
+  const [validationSuccess, setValidationSuccess] = useState(false);
+  const [qrData, setQrData] = useState(null);
 
   useEffect(() => {
-    if (selectedOption === 'QRCode' && !isSuccess) {
-      const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-      scanner.render(
-        (decodedText, decodedResult) => {
-          // Função de sucesso ao ler o QR Code
-          console.log(`Código QR lido: ${decodedText}`);
-          // Validar o QR code
-          handleQrCodeSuccess(decodedText);
-          scanner.clear();
-        },
-        (errorMessage) => {
-          // Função de erro durante a leitura
-          console.error(`Erro ao ler o QR Code: ${errorMessage}`);
-        }
-      );
-    }
-  }, [selectedOption, isSuccess]);
+    if (selectedOption === 'QRCode') {
+      const getCameraStream = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
 
-  const handleQrCodeSuccess = (data) => {
-    // Simulação de validação
-    setQrCodeData(data);
-    setIsSuccess(true); // Define como sucesso para renderizar o componente SuccessValidation
-  };
+          const analyzeQRCode = () => {
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+
+            if (canvas && video) {
+              const ctx = canvas.getContext('2d');
+
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+              if (code) {
+                setQrData(code.data);
+                setValidationSuccess(true);
+              } else {
+                requestAnimationFrame(analyzeQRCode);
+              }
+            }
+          };
+
+          requestAnimationFrame(analyzeQRCode);
+        } catch (error) {
+          console.error('Erro ao acessar a câmera:', error);
+        }
+      };
+
+      getCameraStream();
+    }
+  }, [selectedOption]);
+
+  if (validationSuccess) {
+    return <SuccessValidation qrData={qrData} />;
+  }
 
   return (
     <ModalOverlay>
       <ModalContainer>
         <TopDiv>
-          <FaLessThan style={{cursor: 'pointer'}} />
+          <FaLessThan style={{cursor: 'pointer'}}/>
           <p>Participantes</p>
-          <SlOptionsVertical style={{cursor: 'pointer'}} />
+          <SlOptionsVertical style={{cursor: 'pointer'}}/>
         </TopDiv>
         <SelectInterface>
           <Option style={{marginLeft: '1em'}} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>
@@ -150,13 +174,12 @@ export default function Checkin() {
             QR Code
           </Option>
         </SelectInterface>
-        <CameraDiv id="reader">
+        <CameraDiv>
           {selectedOption === 'QRCode' ? (
-            isSuccess ? (
-              <SuccessValidation qrData={qrCodeData} />
-            ) : (
-              <div id="reader"></div>
-            )
+            <>
+              <Video ref={videoRef} autoPlay />
+              <canvas ref={canvasRef} style={{ display: 'none' }} />
+            </>
           ) : (
             <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
           )}
