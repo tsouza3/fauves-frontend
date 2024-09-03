@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaLessThan } from 'react-icons/fa';
 import { SlOptionsVertical } from "react-icons/sl";
 import jsQR from 'jsqr';
-import SuccessValidation from './SuccessValidation';
+import SuccessValidation from './successValidation';
 
 const ModalOverlay = styled.div`
   display: flex;
@@ -124,7 +124,7 @@ export default function Checkin() {
       const getCameraStream = async () => {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' } // Define a câmera traseira como padrão
+            video: { facingMode: { exact: 'environment' } } // Define a câmera traseira como padrão
           });
 
           if (videoRef.current) {
@@ -190,7 +190,7 @@ export default function Checkin() {
           )}
         </CameraDiv>
         <BottomDiv>
-          Digitalize o QR Code para fazer o check-in..
+          Digitalize o QR Code para fazer o check-in.
         </BottomDiv>
       </ModalContainer>
     </ModalOverlay>
