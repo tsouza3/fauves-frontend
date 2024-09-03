@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import jsQR from "jsqr";
 import { getUserProfile } from "../services/userDataService";
 import { getEventById } from "../services/getEventsById";
 import { Container, QrCode, QrContainer, EventName } from './qrCodeComponentStyles';
@@ -13,7 +12,6 @@ const QrCodeComponent = () => {
 
   const [qrCodes, setQrCodes] = useState([]);
   const [eventNames, setEventNames] = useState({});
-  const [decodedUrls, setDecodedUrls] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
   const [selectedTicket, setSelectedTicket] = useState(null); // Armazena o ticket selecionado
 
@@ -33,8 +31,9 @@ const QrCodeComponent = () => {
         const profileData = await getUserProfile({ token });
         const qrCodesData = profileData.QRCode || [];
 
+        // Mapeia os dados dos QR codes para incluir os dados completos
         setQrCodes(qrCodesData);
-        decodeQrCodes(qrCodesData);
+        fetchEventNames(qrCodesData);
       } catch (error) {
         console.error("Erro ao buscar os dados do perfil:", error);
       }
@@ -43,38 +42,8 @@ const QrCodeComponent = () => {
     fetchProfileData();
   }, [token]);
 
-  const decodeQrCodes = async (qrCodesData) => {
-    const urls = [];
-
-    for (const base64Image of qrCodesData) {
-      const img = new Image();
-      img.src = base64Image;
-
-      await new Promise((resolve) => {
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          context.drawImage(img, 0, 0);
-
-          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-          const decoded = jsQR(imageData.data, canvas.width, canvas.height);
-
-          if (decoded) {
-            urls.push(decoded.data);
-          }
-          resolve();
-        };
-      });
-    }
-
-    setDecodedUrls(urls);
-    fetchEventNames(urls);
-  };
-
-  const fetchEventNames = async (urls) => {
-    const eventIds = urls.map(url => new URL(url).pathname.split('/')[2]);
+  const fetchEventNames = async (qrCodesData) => {
+    const eventIds = [...new Set(qrCodesData.map(qrCode => qrCode.eventId))];
     const names = {};
 
     for (const eventId of eventIds) {
@@ -91,23 +60,22 @@ const QrCodeComponent = () => {
 
   return (
     <Container>
-      {decodedUrls.length > 0 ? (
-        decodedUrls.map((url, index) => {
-          const eventId = new URL(url).pathname.split('/')[2];
-          const eventName = eventNames[eventId];
-          const ticket = { url, index }; // Adiciona informação sobre o ticket
+      {qrCodes.length > 0 ? (
+        qrCodes.map((qrCode, index) => {
+          const eventName = eventNames[qrCode.eventId];
+          const ticket = { ...qrCode, eventName, index }; // Adiciona informação sobre o ticket
 
           return (
             <QrContainer key={index} onClick={() => openEditModal(ticket)}>
               {eventName && <EventName><h1>{eventName}</h1></EventName>}
-              <QrCode src={qrCodes[index]} alt={`QR Code ${index + 1}`} />
+              <QrCode src={qrCode.data} alt={`QR Code ${index + 1}`} />
             </QrContainer>
           );
         })
       ) : (
         <p></p>
       )}
-      {isEditModalOpen && <TicketDetails onClose={closeEditModal} />}
+      {isEditModalOpen && <TicketDetails onClose={closeEditModal} ticket={selectedTicket} />}
     </Container>
   );
 };
