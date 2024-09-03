@@ -108,18 +108,25 @@ const PlaceholderDiv = styled.div`
   font-weight: bold;
 `;
 
+const Canvas = styled.canvas`
+  display: none;
+`;
+
 export default function Checkin() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
   const [validationSuccess, setValidationSuccess] = useState(false);
-  const [qrData, setQrData] = useState(null);
+  const [qrData, setQrData] = useState('');
 
   useEffect(() => {
     if (selectedOption === 'QRCode') {
       const getCameraStream = async () => {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: 'environment' } } // Define a câmera traseira como padrão
+          });
+
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -154,20 +161,16 @@ export default function Checkin() {
     }
   }, [selectedOption]);
 
-  if (validationSuccess) {
-    return <SuccessValidation qrData={qrData} />;
-  }
-
   return (
     <ModalOverlay>
       <ModalContainer>
         <TopDiv>
-          <FaLessThan style={{cursor: 'pointer'}}/>
+          <FaLessThan style={{ cursor: 'pointer' }} />
           <p>Participantes</p>
-          <SlOptionsVertical style={{cursor: 'pointer'}}/>
+          <SlOptionsVertical style={{ cursor: 'pointer' }} />
         </TopDiv>
         <SelectInterface>
-          <Option style={{marginLeft: '1em'}} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>
+          <Option style={{ marginLeft: '1em' }} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>
             Lista
           </Option>
           <Option selected={selectedOption === 'QRCode'} onClick={() => setSelectedOption('QRCode')}>
@@ -175,10 +178,12 @@ export default function Checkin() {
           </Option>
         </SelectInterface>
         <CameraDiv>
-          {selectedOption === 'QRCode' ? (
+          {validationSuccess ? (
+            <SuccessValidation qrData={qrData} />
+          ) : selectedOption === 'QRCode' ? (
             <>
               <Video ref={videoRef} autoPlay />
-              <canvas ref={canvasRef} style={{ display: 'none' }} />
+              <Canvas ref={canvasRef} width={640} height={480} />
             </>
           ) : (
             <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
