@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaLessThan } from 'react-icons/fa';
 import { SlOptionsVertical } from "react-icons/sl";
 import { Html5QrcodeScanner } from "html5-qrcode";
-import SuccessValidation from './successValidationStyles'; // Importe o componente
+import SuccessValidation from './successValidation'; // Importe o componente
 
 // Estilo para o modal
 const ModalOverlay = styled.div`
