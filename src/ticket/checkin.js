@@ -6,7 +6,7 @@ import jsQR from 'jsqr';
 import SuccessValidation from './successValidation';
 import { IoSearchOutline } from "react-icons/io5";
 import { validateQrCode } from '../services/validateQrCode'; 
-import ErrorValidation from './errorValidation'
+import ErrorValidation from './errorValidation';
 
 const ModalOverlay = styled.div`
   display: flex;
@@ -139,6 +139,7 @@ export default function Checkin() {
           const stream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: { exact: "environment" } }
           });
+          console.log('Câmera acessada com sucesso');
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -161,24 +162,25 @@ export default function Checkin() {
 
       const analyzeQRCode = async () => {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          console.log('Iniciando a análise do QR Code');
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
           const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-          if (code && code.data !== qrData) { // Verifica se o QR code é novo
-            console.log('QR Code Data:', code.data); // Verifica se o valor é o esperado
+          if (code && code.data !== qrData) {
+            console.log('QR Code detectado:', code.data);
             setQrData(code.data);
 
             try {
-              console.log('Validando QR Code...'); // Log para indicar que a validação está sendo tentada
-              const result = await validateQrCode(code.data); // Validação do QR code
-              console.log('Resultado da Validação:', result); // Verificar o resultado da validação
+              console.log('Tentando validar o QR Code...');
+              const result = await validateQrCode(code.data);
+              console.log('Resultado da validação:', result);
               setValidationResult(result);
               stopScanning = true; // Para de escanear após validação bem-sucedida
             } catch (err) {
-              console.error('Erro ao validar o QR Code:', err); // Verificar se há erro na validação
+              console.error('Erro ao validar o QR Code:', err);
               setError('Falha ao validar o QR Code. Tente novamente.');
             }
           }
@@ -190,7 +192,6 @@ export default function Checkin() {
 
       analyzeQRCode();
 
-      // Limpeza ao desmontar o componente
       return () => {
         stopScanning = true;
       };
