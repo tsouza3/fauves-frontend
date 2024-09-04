@@ -21,15 +21,17 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px;
-  height: 650px;
+  width: 500px; /* Largura fixa para dispositivos maiores */
+  height: 650px; /* Altura fixa para dispositivos maiores */
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
   @media (max-width: 600px) {
-    width: 100vw;
-    height: 100vh;
+    width: 100vw; /* Largura total da tela para dispositivos móveis */
+    height: 100vh; /* Altura total da tela para dispositivos móveis */
+    border-radius: 0; /* Remove bordas arredondadas em dispositivos móveis */
   }
 `;
 
