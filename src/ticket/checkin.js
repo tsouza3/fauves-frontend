@@ -5,8 +5,7 @@ import { SlOptionsVertical } from "react-icons/sl";
 import jsQR from 'jsqr';
 import SuccessValidation from './successValidation';
 import { IoSearchOutline } from "react-icons/io5";
-import { validateQrCode } from '../services/validateQrCode'; // Importe o serviço criado
-
+import { validateQrCode } from '../services/validateQrCode'; 
 
 const ModalOverlay = styled.div`
   display: flex;
@@ -24,17 +23,16 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px;
-  height: 650px;
+  width: 500px; /* Largura fixa para dispositivos maiores */
+  height: 650px; /* Altura fixa para dispositivos maiores */
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
   @media (max-width: 800px) {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
+    width: 100vw; /* Largura total da tela para dispositivos móveis */
+    height: 100vh; /* Altura total da tela para dispositivos móveis */
+    border-radius: 0; /* Remove bordas arredondadas em dispositivos móveis */
   }
 `;
 
@@ -89,13 +87,13 @@ const BottomDiv = styled.div`
 `;
 
 export const Input = styled.input`
-  width: 100%;
-  height: 60px;
-  border: none;
-  text-decoration: none;
-  appearance: none;
-  text-indent: 10px;
-  outline: none;
+width: 100%;
+height: 60px;
+border: none;
+text-decoration: none;
+appearance: none;
+text-indent: 10px;
+outline: none;
 `;
 
 const CameraDiv = styled.div`
@@ -130,8 +128,8 @@ export default function Checkin() {
   const videoRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
   const [qrData, setQrData] = useState(null);
-  const [validationResult, setValidationResult] = useState(null); // Novo estado para armazenar o resultado da validação
-  const [error, setError] = useState(null); // Novo estado para armazenar erros
+  const [validationResult, setValidationResult] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (selectedOption === 'QRCode') {
@@ -153,11 +151,13 @@ export default function Checkin() {
   }, [selectedOption]);
 
   useEffect(() => {
+    let stopScanning = false;
+
     if (selectedOption === 'QRCode' && videoRef.current) {
       const video = videoRef.current;
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
-      
+
       const analyzeQRCode = async () => {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
           canvas.width = video.videoWidth;
@@ -165,34 +165,41 @@ export default function Checkin() {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
           const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height);
-          
-          if (code) {
+
+          if (code && code.data !== qrData) { // Verifica se o QR code é novo
             console.log('QR Code Data:', code.data);
             setQrData(code.data);
 
             try {
               const result = await validateQrCode(code.data); // Valida o QR code
-              console.log(result)
               setValidationResult(result);
+              stopScanning = true; // Para de escanear após validação bem-sucedida
             } catch (err) {
               setError('Falha ao validar o QR Code. Tente novamente.');
             }
           }
         }
-        requestAnimationFrame(analyzeQRCode);
+        if (!stopScanning) {
+          requestAnimationFrame(analyzeQRCode);
+        }
       };
 
       analyzeQRCode();
+
+      // Limpeza ao desmontar o componente
+      return () => {
+        stopScanning = true;
+      };
     }
-  }, [selectedOption, videoRef]);
+  }, [selectedOption, videoRef, qrData]);
 
   return (
     <ModalOverlay>
       <ModalContainer>
         {validationResult ? (
-          <SuccessValidation data={validationResult} />
+          <SuccessValidation qrData={validationResult} />
         ) : error ? (
-          <div>{error}</div> // Componente de erro simples
+          <div>{error}</div>
         ) : (
           <>
             <TopDiv>
@@ -214,12 +221,10 @@ export default function Checkin() {
               ) : (
                 <div style={{width: '100%', height: '100%'}}>
                   <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                  <IoSearchOutline style={{marginLeft: '1em'}} size='30px'/>
-                      <Input placeholder='Procurar'/>
-                      </div>
-
-                <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
-            
+                    <IoSearchOutline style={{marginLeft: '1em'}} size='30px'/>
+                    <Input placeholder='Procurar'/>
+                  </div>
+                  <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
                 </div>
               )}
             </CameraDiv>
