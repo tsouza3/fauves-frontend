@@ -6,6 +6,7 @@ import jsQR from 'jsqr';
 import SuccessValidation from './successValidation';
 import { IoSearchOutline } from "react-icons/io5";
 import { validateQrCode } from '../services/validateQrCode'; 
+import ErrorValidation from './errorValidation'
 
 const ModalOverlay = styled.div`
   display: flex;
@@ -199,7 +200,7 @@ export default function Checkin() {
         {validationResult ? (
           <SuccessValidation qrData={validationResult} />
         ) : error ? (
-          <div>{error}</div>
+          <ErrorValidation />
         ) : (
           <>
             <TopDiv>
