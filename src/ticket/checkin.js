@@ -88,13 +88,13 @@ const BottomDiv = styled.div`
 `;
 
 export const Input = styled.input`
-width: 100%;
-height: 60px;
-border: none;
-text-decoration: none;
-appearance: none;
-text-indent: 10px;
-outline: none;
+  width: 100%;
+  height: 60px;
+  border: none;
+  text-decoration: none;
+  appearance: none;
+  text-indent: 10px;
+  outline: none;
 `;
 
 const CameraDiv = styled.div`
@@ -167,17 +167,18 @@ export default function Checkin() {
           const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-          if (code && code.data !== qrData) { 
-            console.log('QR Code Data:', code.data);
+          if (code && code.data !== qrData) { // Verifica se o QR code é novo
+            console.log('QR Code Data:', code.data); // Verifica se o valor é o esperado
             setQrData(code.data);
 
             try {
-              const result = await validateQrCode(code.data);
-              console.log('Validation Result:', result); // Verificação para garantir que a validação ocorreu
+              console.log('Validando QR Code...'); // Log para indicar que a validação está sendo tentada
+              const result = await validateQrCode(code.data); // Validação do QR code
+              console.log('Resultado da Validação:', result); // Verificar o resultado da validação
               setValidationResult(result);
-              stopScanning = true; 
+              stopScanning = true; // Para de escanear após validação bem-sucedida
             } catch (err) {
-              console.error('Erro na validação:', err); // Verifica erros da validação
+              console.error('Erro ao validar o QR Code:', err); // Verificar se há erro na validação
               setError('Falha ao validar o QR Code. Tente novamente.');
             }
           }
@@ -189,6 +190,7 @@ export default function Checkin() {
 
       analyzeQRCode();
 
+      // Limpeza ao desmontar o componente
       return () => {
         stopScanning = true;
       };
