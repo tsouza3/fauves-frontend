@@ -24,9 +24,9 @@ export const validateQrCode = async (qrCodeUrl) => {
       throw new Error('URL inválida. Parâmetros insuficientes.');
     }
 
-    const eventId = paths[0];
-    const userId = paths[1];
-    const ticketId = paths[2];
+    const eventId = paths[1];
+    const userId = paths[2];
+    const ticketId = paths[3];
 
     console.log('Event ID:', eventId, 'User ID:', userId, 'Ticket ID:', ticketId, 'UUID:', uuid);
 
