@@ -167,15 +167,17 @@ export default function Checkin() {
           const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-          if (code && code.data !== qrData) { // Verifica se o QR code é novo
+          if (code && code.data !== qrData) { 
             console.log('QR Code Data:', code.data);
             setQrData(code.data);
 
             try {
-              const result = await validateQrCode(code.data); // Valida o QR code
+              const result = await validateQrCode(code.data);
+              console.log('Validation Result:', result); // Verificação para garantir que a validação ocorreu
               setValidationResult(result);
-              stopScanning = true; // Para de escanear após validação bem-sucedida
+              stopScanning = true; 
             } catch (err) {
+              console.error('Erro na validação:', err); // Verifica erros da validação
               setError('Falha ao validar o QR Code. Tente novamente.');
             }
           }
@@ -187,7 +189,6 @@ export default function Checkin() {
 
       analyzeQRCode();
 
-      // Limpeza ao desmontar o componente
       return () => {
         stopScanning = true;
       };
