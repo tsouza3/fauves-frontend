@@ -178,10 +178,12 @@ export default function Checkin() {
               const result = await validateQrCode(code.data);
               console.log('Resultado da validação:', result);
               setValidationResult(result);
+              setError(null); // Limpa qualquer erro anterior
               stopScanning = true; // Para de escanear após validação bem-sucedida
             } catch (err) {
               console.error('Erro ao validar o QR Code:', err);
               setError('Falha ao validar o QR Code. Tente novamente.');
+              setValidationResult(null); // Limpa qualquer resultado anterior
             }
           }
         }
@@ -209,7 +211,7 @@ export default function Checkin() {
           <>
             <TopDiv>
               <FaLessThan style={{ cursor: 'pointer' }} />
-              <p style={{margin: '0'}}>Participantes</p>
+              <p style={{ margin: '0' }}>Participantes</p>
               <SlOptionsVertical style={{ cursor: 'pointer' }} />
             </TopDiv>
             <SelectInterface>
@@ -224,9 +226,9 @@ export default function Checkin() {
               {selectedOption === 'QRCode' ? (
                 <Video ref={videoRef} autoPlay />
               ) : (
-                <div style={{width: '100%', height: '100%'}}>
-                  <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                    <IoSearchOutline style={{marginLeft: '1em'}} size='30px'/>
+                <div style={{ width: '100%', height: '100%' }}>
+                  <div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <IoSearchOutline style={{ marginLeft: '1em' }} size='30px'/>
                     <Input placeholder='Procurar'/>
                   </div>
                   <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
@@ -234,7 +236,7 @@ export default function Checkin() {
               )}
             </CameraDiv>
             <BottomDiv show={selectedOption === 'QRCode'}>
-              <p style={{maxWidth: '95%', textAlign: 'center'}}>
+              <p style={{ maxWidth: '95%', textAlign: 'center' }}>
                 Digitalize o QR Code para fazer o check-in.
               </p>
             </BottomDiv>
