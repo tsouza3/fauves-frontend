@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section, Content } from './successValidationStyles';
+import { Section, Content } from './errorValidationStyles';
 
 export default function ErrorValidation() {
   return (
