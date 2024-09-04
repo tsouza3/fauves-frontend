@@ -4,6 +4,9 @@ import { FaLessThan } from 'react-icons/fa';
 import { SlOptionsVertical } from "react-icons/sl";
 import jsQR from 'jsqr';
 import SuccessValidation from './successValidation';
+import { IoSearchOutline } from "react-icons/io5";
+import { validateQrCode } from '../services/validateQrCode'; // Importe o serviço criado
+
 
 const ModalOverlay = styled.div`
   display: flex;
@@ -27,8 +30,7 @@ const ModalContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-  @media (max-width: 600px) {
+  @media (max-width: 800px) {
     width: 100vw; /* Largura total da tela para dispositivos móveis */
     height: 100vh; /* Altura total da tela para dispositivos móveis */
     border-radius: 0; /* Remove bordas arredondadas em dispositivos móveis */
@@ -37,19 +39,26 @@ const ModalContainer = styled.div`
 
 const TopDiv = styled.div`
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: space-around;
   background-color: #fff; 
-  height: 20%;
+  height: 12%;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 17px;
-  color: #4b4b4b;
+  gap: 5.5em;
+  color: #4b4b4b; 
+
+  @media (max-width: 800px) {
+    height: 9%;
+
+  }
 `;
 
 const SelectInterface = styled.div`
   width: 100%;
   display: flex;
+  margin-top: 1em;
   justify-content: start;
   gap: 1.5em;
   flex-direction: row;
@@ -68,7 +77,7 @@ const Option = styled.div`
 `;
 
 const BottomDiv = styled.div`
-  display: flex;
+  display: ${(props) => (props.show ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
   background-color: #fff; 
@@ -78,6 +87,17 @@ const BottomDiv = styled.div`
   color: #4b4b4b;
   height: 30%;
 `;
+
+export const Input = styled.input`
+width: 100%;
+height: 60px;
+border: none;
+text-decoration: none;
+appearance: none;
+text-indent: 10px;
+outline: none;
+
+`
 
 const CameraDiv = styled.div`
   flex: 2;
@@ -107,11 +127,14 @@ const PlaceholderDiv = styled.div`
   font-weight: bold;
 `;
 
+
 export default function Checkin() {
   const videoRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
   const [qrData, setQrData] = useState(null);
-  
+  const [validationResult, setValidationResult] = useState(null); // Novo estado para armazenar o resultado da validação
+  const [error, setError] = useState(null); // Novo estado para armazenar erros
+
   useEffect(() => {
     if (selectedOption === 'QRCode') {
       const getCameraStream = async () => {
@@ -137,7 +160,7 @@ export default function Checkin() {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       
-      const analyzeQRCode = () => {
+      const analyzeQRCode = async () => {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
@@ -148,6 +171,13 @@ export default function Checkin() {
           if (code) {
             console.log('QR Code Data:', code.data);
             setQrData(code.data);
+
+            try {
+              const result = await validateQrCode(code.data); // Valida o QR code
+              setValidationResult(result);
+            } catch (err) {
+              setError('Falha ao validar o QR Code. Tente novamente.');
+            }
           }
         }
         requestAnimationFrame(analyzeQRCode);
@@ -160,13 +190,15 @@ export default function Checkin() {
   return (
     <ModalOverlay>
       <ModalContainer>
-        {qrData ? (
-          <SuccessValidation qrData={qrData} />
+        {validationResult ? (
+          <SuccessValidation data={validationResult} />
+        ) : error ? (
+          <div>{error}</div> // Componente de erro simples
         ) : (
           <>
             <TopDiv>
               <FaLessThan style={{ cursor: 'pointer' }} />
-              <p>Participantes</p>
+              <p style={{margin: '0'}}>Participantes</p>
               <SlOptionsVertical style={{ cursor: 'pointer' }} />
             </TopDiv>
             <SelectInterface>
@@ -181,11 +213,21 @@ export default function Checkin() {
               {selectedOption === 'QRCode' ? (
                 <Video ref={videoRef} autoPlay />
               ) : (
+                <div style={{width: '100%', height: '100%'}}>
+                  <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <IoSearchOutline style={{marginLeft: '1em'}} size='30px'/>
+                      <Input placeholder='Procurar'/>
+                      </div>
+
                 <PlaceholderDiv>Lista de Participantes</PlaceholderDiv>
+            
+                </div>
               )}
             </CameraDiv>
-            <BottomDiv>
-              Digitalize o QR Code para fazer o check-in.
+            <BottomDiv show={selectedOption === 'QRCode'}>
+              <p style={{maxWidth: '95%', textAlign: 'center'}}>
+                Digitalize o QR Code para fazer o check-in.
+              </p>
             </BottomDiv>
           </>
         )}
@@ -193,5 +235,3 @@ export default function Checkin() {
     </ModalOverlay>
   );
 }
-
-
