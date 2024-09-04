@@ -24,16 +24,17 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px; /* Largura fixa para dispositivos maiores */
-  height: 650px; /* Altura fixa para dispositivos maiores */
+  width: 500px;
+  height: 650px;
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
   @media (max-width: 800px) {
-    width: 100vw; /* Largura total da tela para dispositivos móveis */
-    height: 100vh; /* Altura total da tela para dispositivos móveis */
-    border-radius: 0; /* Remove bordas arredondadas em dispositivos móveis */
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
   }
 `;
 
@@ -51,7 +52,6 @@ const TopDiv = styled.div`
 
   @media (max-width: 800px) {
     height: 9%;
-
   }
 `;
 
@@ -89,15 +89,14 @@ const BottomDiv = styled.div`
 `;
 
 export const Input = styled.input`
-width: 100%;
-height: 60px;
-border: none;
-text-decoration: none;
-appearance: none;
-text-indent: 10px;
-outline: none;
-
-`
+  width: 100%;
+  height: 60px;
+  border: none;
+  text-decoration: none;
+  appearance: none;
+  text-indent: 10px;
+  outline: none;
+`;
 
 const CameraDiv = styled.div`
   flex: 2;
@@ -126,7 +125,6 @@ const PlaceholderDiv = styled.div`
   font-size: 24px;
   font-weight: bold;
 `;
-
 
 export default function Checkin() {
   const videoRef = useRef(null);
@@ -174,6 +172,7 @@ export default function Checkin() {
 
             try {
               const result = await validateQrCode(code.data); // Valida o QR code
+              console.log(result)
               setValidationResult(result);
             } catch (err) {
               setError('Falha ao validar o QR Code. Tente novamente.');
