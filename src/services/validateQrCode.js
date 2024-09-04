@@ -9,7 +9,7 @@ const getTokenFromCookie = () => {
 };
 
 // Função para validar o QR code
-const validateQrCode = async (qrCodeUrl) => {
+export const validateQrCode = async (qrCodeUrl) => {
   try {
     // Extrair os parâmetros da URL
     const url = new URL(qrCodeUrl);
