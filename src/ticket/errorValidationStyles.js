@@ -13,16 +13,41 @@ export const Section = styled.div`
 
 export const Content = styled.div`
   text-align: center;
-  color: white;
+  color: fff;
   font-family: "Montserrat", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  p {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
+  
 `;
+
+export const PurchaseButton = styled.button`
+  border-radius: 10px;
+  width: 95%;
+  height: 60px;
+  color: #fff;
+  background-color: #8C2A13;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ImageWrapper = styled.div`
+width: 30%;
+height: 30%;
+`
+
+export const TextWrapper = styled.div`
+ color: fff;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  
+`
