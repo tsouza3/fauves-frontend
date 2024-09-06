@@ -23,10 +23,10 @@ export const Content = styled.div`
   
 `;
 
-export const PurchaseButton = styled.button`
+export const BackButton = styled.button`
   border-radius: 10px;
   width: 95%;
-  height: 60px;
+  height: 80px;
   color: #fff;
   background-color: #8C2A13;
   font-family: "Montserrat", sans-serif;
