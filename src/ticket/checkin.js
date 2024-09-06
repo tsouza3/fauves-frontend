@@ -132,6 +132,12 @@ export default function Checkin() {
   const [validationResult, setValidationResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const handleBackToCheckin = () => {
+    setValidationResult(null); // Limpa o resultado da validação
+    setError(null);            // Limpa o erro
+    setSelectedOption('QRCode'); // Volta para a interface de QR Code
+  };
+
   useEffect(() => {
     if (selectedOption === 'QRCode') {
       const getCameraStream = async () => {
@@ -206,7 +212,7 @@ export default function Checkin() {
         {validationResult ? (
           <SuccessValidation qrData={validationResult} />
         ) : error ? (
-          <ErrorValidation />
+          <ErrorValidation onBack={handleBackToCheckin}/>
         ) : (
           <>
             <TopDiv>
