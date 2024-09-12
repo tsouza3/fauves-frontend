@@ -24,16 +24,17 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 500px; /* Largura fixa para dispositivos maiores */
-  height: 650px; /* Altura fixa para dispositivos maiores */
+  width: 500px; 
+  height: 650px; 
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
   @media (max-width: 800px) {
-    width: 100vw; /* Largura total da tela para dispositivos móveis */
-    height: 100vh; /* Altura total da tela para dispositivos móveis */
-    border-radius: 0; /* Remove bordas arredondadas em dispositivos móveis */
+    width: 100vw; 
+    height: 100vh; 
+    border-radius: 0; 
   }
 `;
 
@@ -48,6 +49,7 @@ const TopDiv = styled.div`
   font-size: 17px;
   gap: 5.5em;
   color: #4b4b4b; 
+  position: relative;
 
   @media (max-width: 800px) {
     height: 9%;
@@ -125,17 +127,54 @@ const PlaceholderDiv = styled.div`
   font-weight: bold;
 `;
 
+// Estilizando o menu de opções
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 35px;
+  right: 2px;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+`;
+
+const DropdownItem = styled.div`
+  padding: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: #4b4b4b;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #efefef;
+  }
+`;
+
 export default function Checkin() {
   const videoRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('QRCode');
   const [qrData, setQrData] = useState(null);
   const [validationResult, setValidationResult] = useState(null);
   const [error, setError] = useState(null);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const handleBackToCheckin = () => {
-    setValidationResult(null); // Limpa o resultado da validação
-    setError(null);            // Limpa o erro
-    setSelectedOption('QRCode'); // Volta para a interface de QR Code
+    setValidationResult(null);
+    setError(null);
+    setSelectedOption('QRCode');
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleDropdownClick = (option) => {
+    // Lógica para lidar com as opções selecionadas
+    console.log(option);
+    setDropdownVisible(false); // Fecha o dropdown após a seleção
   };
 
   useEffect(() => {
@@ -145,7 +184,6 @@ export default function Checkin() {
           const stream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: { exact: "environment" } }
           });
-          console.log('Câmera acessada com sucesso');
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -158,59 +196,11 @@ export default function Checkin() {
     }
   }, [selectedOption]);
 
-  useEffect(() => {
-    let stopScanning = false;
-
-    if (selectedOption === 'QRCode' && videoRef.current) {
-      const video = videoRef.current;
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-
-      const analyzeQRCode = async () => {
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-          console.log('Iniciando a análise do QR Code');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-          const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-          if (code && code.data !== qrData) {
-            console.log('QR Code detectado:', code.data);
-            setQrData(code.data);
-
-            try {
-              console.log('Tentando validar o QR Code...');
-              const result = await validateQrCode(code.data);
-              console.log('Resultado da validação:', result);
-              setValidationResult(result);
-              setError(null); // Limpa qualquer erro anterior
-              stopScanning = true; // Para de escanear após validação bem-sucedida
-            } catch (err) {
-              console.error('Erro ao validar o QR Code:', err);
-              setError('Falha ao validar o QR Code. Tente novamente.');
-              setValidationResult(null); // Limpa qualquer resultado anterior
-            }
-          }
-        }
-        if (!stopScanning) {
-          requestAnimationFrame(analyzeQRCode);
-        }
-      };
-
-      analyzeQRCode();
-
-      return () => {
-        stopScanning = true;
-      };
-    }
-  }, [selectedOption, videoRef, qrData]);
-
   return (
     <ModalOverlay>
       <ModalContainer>
         {validationResult ? (
-          <SuccessValidation qrData={validationResult} />
+          <SuccessValidation qrData={validationResult} onBack={handleBackToCheckin}/>
         ) : error ? (
           <ErrorValidation onBack={handleBackToCheckin}/>
         ) : (
@@ -218,7 +208,22 @@ export default function Checkin() {
             <TopDiv>
               <FaLessThan style={{ cursor: 'pointer' }} />
               <p style={{ margin: '0' }}>Participantes</p>
-              <SlOptionsVertical style={{ cursor: 'pointer' }} />
+              <div style={{ position: 'relative' }}>
+                <SlOptionsVertical style={{ cursor: 'pointer' }} onClick={toggleDropdown} />
+                {dropdownVisible && (
+                  <DropdownMenu>
+                    <DropdownItem onClick={() => handleDropdownClick('opções de check-in')}>
+                      Opções de Check-in
+                    </DropdownItem>
+                    <DropdownItem onClick={() => handleDropdownClick('exportar participantes')}>
+                      Exportar Participantes
+                    </DropdownItem>
+                    <DropdownItem onClick={() => handleDropdownClick('informações de check-in')}>
+                      Informações de Check-in
+                    </DropdownItem>
+                  </DropdownMenu>
+                )}
+              </div>
             </TopDiv>
             <SelectInterface>
               <Option style={{ marginLeft: '1em' }} selected={selectedOption === 'Lista'} onClick={() => setSelectedOption('Lista')}>

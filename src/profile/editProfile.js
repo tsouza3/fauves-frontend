@@ -134,8 +134,9 @@ export default function EditProfile() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
+
       const token = document.cookie.replace(
         /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
         "$1"

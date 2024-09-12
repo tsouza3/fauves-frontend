@@ -7,6 +7,7 @@ import { IoMdStar } from 'react-icons/io';
 import { IoEyeOutline } from 'react-icons/io5';
 import { MdOutlineQrCode } from 'react-icons/md';
 import Navbar from '../home/navbar';
+import MobileNavbar from '../home/mobileNavbar'; // Importe o MobileNavbar
 import { buscarEventosUsuario } from '../services/buscarEventosUsuario';
 import { getUserProfile } from '../services/userDataService';
 import Rodape from '../rodape/rodape';
@@ -42,9 +43,7 @@ import {
   Perfis,
   Title,
   CreateLink,
-  CenterContainer,
-  AdminIcon,
-  ObserverIcon
+  CenterContainer
 } from './userHomeStyles';
 import { Profile } from './profile';
 
@@ -60,9 +59,23 @@ export default function UserHome() {
     '$1',
   );
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Estado para verificar se é mobile
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
+
+  // Atualizar estado ao redimensionar janela
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,14 +115,14 @@ export default function UserHome() {
 
   return (
     <Section>
-      <Navbar />
+      {isMobile ? <MobileNavbar /> : <Navbar />} {/* Renderizar condicionalmente Navbar ou MobileNavbar */}
       <Profile />
       <CenterContainer>
         <AllContainer>
           <Container>
             <Text>
-              O Seu perfil ainda está incompleto. Preencha os dados de{' '}
-              <strong>Endereço.</strong>
+              O seu perfil ainda está incompleto. Preencha os dados de{' '}
+              <strong>endereço.</strong>
             </Text>
             <EditProfileBtn to="/editprofile">Concluir cadastro</EditProfileBtn>
           </Container>

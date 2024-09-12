@@ -18,9 +18,9 @@ export const Content = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
-
-  
 `;
 
 export const BackButton = styled.button`
@@ -37,12 +37,15 @@ export const BackButton = styled.button`
   text-decoration: none;
   display: flex;
   justify-content: center;
+  margin-bottom: 1em;
   align-items: center;
 `;
 
 export const ImageWrapper = styled.div`
 width: 30%;
 height: 30%;
+display: flex;
+justify-content: center;
 `
 
 export const TextWrapper = styled.div`
