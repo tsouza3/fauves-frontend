@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 import ReactInputMask from "react-input-mask";
 
 export const Section = styled.section`
@@ -12,6 +11,7 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+
 `;
 
 export const PhotoPreview = styled.img`
@@ -19,11 +19,19 @@ export const PhotoPreview = styled.img`
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
+  display: flex;
   position: absolute;
   top: 0;
   left: 0;
   margin-left: 10em;
+
+  @media (max-width: 700px) {
+    margin-left: 0;
+    width: 120px;
+    height: 120px;
+  }
 `;
+
 export const SubmitBtn = styled.button`
   width: 500px;
   height: 50px;
@@ -40,7 +48,12 @@ export const SubmitBtn = styled.button`
   background: #ef4118;
   letter-spacing: 0.7px;
   font-family: "Montserrat", sans-serif;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
+
 export const Titulo = styled.p`
   display: flex;
   justify-content: center;
@@ -55,12 +68,17 @@ export const Photo = styled.div`
   width: 150px;
   height: 150px;
   border: 1px solid #ccc;
-  position: relative;
-  margin-left: 10em;
+  align-self: center;
   cursor: pointer;
 
   &:focus {
     border-color: #ef4118;
+  }
+
+  @media (max-width: 700px) {
+    margin-left: 0;
+    width: 120px;
+    height: 120px;
   }
 `;
 
@@ -70,29 +88,40 @@ export const FormTitle = styled.p`
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
   font-size: 33px;
+
+  @media (max-width: 700px) {
+    font-size: 28px;
+    margin-top: 2em;
+  }
 `;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
+
 export const Span = styled.span`
   margin-top: 10px;
 `;
+
 export const InputContainer = styled.div`
   margin-bottom: 2.5em;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 export const Input = styled(ReactInputMask)`
   box-sizing: border-box;
   width: 500px;
   height: 50px;
-
   text-indent: 20px;
-
   background: #ffffff;
   border: 1px solid #c8dae7;
   border-radius: 11px;
@@ -101,13 +130,17 @@ export const Input = styled(ReactInputMask)`
     outline: none;
     border-color: #ef4118;
   }
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 export const Label = styled.label`
   font-family: "Montserrat", sans-serif;
   color: #11455d;
-  font-family: "Montserrat", sans-serif;
   font-weight: 400;
+  margin-bottom: 0.5em;
 `;
 
 export const SubmitButton = styled.button`
@@ -126,6 +159,10 @@ export const SubmitButton = styled.button`
   background: #ef4118;
   letter-spacing: 0.7px;
   font-family: "Montserrat", sans-serif;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 export const PhotoInput = styled.input`

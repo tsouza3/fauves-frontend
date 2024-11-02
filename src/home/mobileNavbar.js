@@ -15,7 +15,7 @@ const NavbarContainer = styled.nav`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 9;
+  z-index: 99;
   padding: 10px 0;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   font-family: "Montserrat", sans-serif;

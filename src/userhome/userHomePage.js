@@ -1,4 +1,3 @@
-// UserHome.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MdAdd } from 'react-icons/md';
@@ -7,7 +6,7 @@ import { IoMdStar } from 'react-icons/io';
 import { IoEyeOutline } from 'react-icons/io5';
 import { MdOutlineQrCode } from 'react-icons/md';
 import Navbar from '../home/navbar';
-import MobileNavbar from '../home/mobileNavbar'; // Importe o MobileNavbar
+import MobileNavbar from '../home/mobileNavbar'; 
 import { buscarEventosUsuario } from '../services/buscarEventosUsuario';
 import { getUserProfile } from '../services/userDataService';
 import Rodape from '../rodape/rodape';

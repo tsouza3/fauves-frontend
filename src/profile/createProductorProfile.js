@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createProductorProfile } from "../services/createComercialProfile";
 import InputMask from "react-input-mask";
 import {
@@ -18,11 +18,10 @@ import {
 } from "./createProductorProfileStyles";
 
 import { ErrorAlert} from '../events/error'
-
 import Rodape from '../rodape/rodape'
-
 import { useNavigate } from "react-router-dom";
 import Navbar from "../home/navbar";
+import MobileNavbar from "../home/mobileNavbar";
 import { Profile } from "../userhome/profile";
 import Loader from '../Loader/loader'
 
@@ -37,11 +36,13 @@ export default function CreateProductorProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null); 
   const [loading, setLoading] = useState(false); 
-
   const [cpfOrCnpj, setCpfOrCnpj] = useState("CPF");
+  
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Estado para a largura da tela
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
+  // Função que lida com a troca de imagem
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -54,14 +55,13 @@ export default function CreateProductorProfile() {
     }
   };
 
+  // Função para lidar com o envio do formulário
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData();
     formData.append("profilePhoto", profilePhoto); 
-
     formData.append("nomeEmpresa", e.target.nomeEmpresa.value);
     formData.append("nomeUsuario", e.target.nomeUsuario.value);
     formData.append("categoria", e.target.categoria.value);
@@ -73,7 +73,7 @@ export default function CreateProductorProfile() {
 
     try {
       await createProductorProfile(formData, token);
-      navigate('/createcomercialprofile/success')
+      navigate('/createcomercialprofile/success');
     } catch (error) {
       setErrorMessage("Erro ao criar perfil comercial.");
     } finally {
@@ -89,10 +89,26 @@ export default function CreateProductorProfile() {
     setCpfOrCnpj(type);
   };
 
+  // Função para monitorar a largura da tela e atualizar o estado
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <Section>
-      <Navbar />
-      <Profile />
+      {/* Renderiza Navbar ou MobileNavbar baseado no tamanho da tela */}
+      {windowWidth > 700 ? <Navbar /> : <MobileNavbar />}
+      
+      {/* Renderiza o Profile condicionalmente para telas maiores */}
+      {windowWidth > 700 && <Profile />}
+
       <Container>
         <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <FormTitle>Criar perfil comercial</FormTitle>
@@ -174,10 +190,10 @@ export default function CreateProductorProfile() {
           <SubmitBtn type="submit">
             {loading ? <Loader /> : "Criar"}
           </SubmitBtn>
-          {errorMessage && <div style={{marginTop: '2em' }}><ErrorAlert error={'Erro ao criar perfil comercial'}/></div>}
+          {errorMessage && <div style={{marginTop: '2em', width: '100%' }}><ErrorAlert error={'Erro ao criar perfil comercial'}/></div>}
         </Form>
       </Container>
-      <Rodape/>
+      <Rodape />
     </Section>
   );
 }

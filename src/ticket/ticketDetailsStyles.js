@@ -5,11 +5,18 @@ export const ModalContent = styled.div`
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
-  width: 35%;
-
+  min-width: 35%;
   position: relative;
   max-height: 65%;
   overflow-y: auto;
+
+  @media (max-width: 700px) {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    padding: 20px;
+  }
 `;
 
 export const ModalWrapper = styled.div`
@@ -26,26 +33,25 @@ export const ModalWrapper = styled.div`
 `;
 
 export const Wrapper = styled.div`
-display: flex;
-flex-direction: column;
-width: 100%;
-max-width: 95%;
-
-`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 95%;
+`;
 
 export const TicketOwner = styled.p`
-font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 18px;
   color: #4b4b4b;
-`
+`;
 
 export const Text = styled.p`
-font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 14px;
   color: #4b4b4b;
-`
+`;
 
 export const Container = styled.div`
   display: flex;
@@ -61,7 +67,7 @@ export const Title = styled.h1`
   font-weight: 700;
   font-size: 25px;
   color: #4b4b4b;
-  `;
+`;
 
 export const SubmitButton = styled.button`
   width: 100%;
@@ -80,24 +86,24 @@ export const SubmitButton = styled.button`
   background-color: ${(props) => props.backgroundColor || "#ef4118"};
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-
   font-family: "Montserrat", sans-serif;
 `;
 
-
 export const Close = styled(IoClose)`
-position: absolute;
-top: 10px;
-right: 10px;
-color: #ef4118;
-cursor: pointer;
-transition: transform 0.2s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #ef4118;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 
+  @media (max-width: 700px) {
+    position: absolute;
+    top: 35px;
+    right: 15px;
+  }
 
-&:hover {
-
-  transform: scale(1.25); 
-
-
+  &:hover {
+    transform: scale(1.25);
+  }
 `;
-
